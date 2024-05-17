@@ -1,32 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <title>Webleb</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="/css/styles.css" rel="stylesheet">
-</head>
-<body>
+<div class="login-container">
   <div class="login-box">
     <h2>Login</h2>
-    <form>
+    <form (ngSubmit)="Login(LoginForm)" #loginForm="ngForm">
       <div class="user-box">
-        <input type="text" name="" required="">
-        <label>Username</label>
+        <input type="text" name="username" [(ngModel)]="LoginForm.username" required>
+        <label for="username">Username</label>
       </div>
       <div class="user-box">
-        <input type="password" name="" required="">
-        <label>Password</label>
+        <input type="password" name="password" [(ngModel)]="LoginForm.password" required>
+        <label for="password">Password</label>
       </div>
-      <a >
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        Submit
-      </a>
+      <button type="submit" [disabled]="!loginForm.valid">Login</button>
     </form>
   </div>
-</body>
-</html>
+</div>
