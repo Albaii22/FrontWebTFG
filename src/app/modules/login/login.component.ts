@@ -1,18 +1,18 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, FormsModule, NgForm } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { LoginI } from '../../interfaces/login.interface';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/authService/auth.service';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { LoginI } from '../../interfaces/login.interface';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule , FormsModule , HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
 
@@ -21,24 +21,38 @@ export class LoginComponent {
     password: ''
   }
 
-  constructor(private authService: AuthService , private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   Login(form: LoginI): void {
     if (this.LoginForm.username !== '' || this.LoginForm.password !== '') {
       this.authService.Login(form).subscribe({
         next: (data) => {
-          console.log('Succesfull Login!!' , data);
-          this.router.navigate([]);
+          Swal.fire({
+            icon: 'success',
+            title: 'Successful Login!',
+            text: 'You have logged in successfully.',
+          });
+          this.router.navigate(['/home']);
         },
         error: (err) => {
-          console.log('Ivalid data', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid data',
+            text: 'There was an error during the login process.',
+          });
         }
       });
     } else {
-      console.log('No data on username and password');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete data',
+        text: 'Please fill out both username and password fields.',
+      });
     }
   }
-  
-  
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
+
 }
- 
