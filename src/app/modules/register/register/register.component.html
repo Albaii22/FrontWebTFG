@@ -17,33 +17,33 @@
                             <div class="col-12">
                                 <div class="mb-4">
                                     <h3 class="text-custom">Sign in</h3>
-                                    <p>Go back to Login <a class="link-custom">| Log in</a></p>
+                                    <p>Go back to Login <a class="link-custom" (click)="goToLogin()">| Log in</a></p>
                                 </div>
                             </div>
                         </div>
-                        <form action="#!">
+                        <form>
                             <div class="row gy-3 overflow-hidden">
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" name="email" id="username" placeholder="name@example.com" required>
+                                        <input type="email" [(ngModel)]="RegisterForm.username" class="form-control" name="email" id="username" placeholder="name@example.com">
                                         <label for="username" class="form-label">Username</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
+                                        <input type="email" [(ngModel)]="RegisterForm.email" class="form-control" name="email" id="email" placeholder="name@example.com">
                                         <label for="email" class="form-label">Email</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                                        <input type="password" [(ngModel)]="RegisterForm.password" class="form-control" name="password" id="password" placeholder="Password">
                                         <label for="password" class="form-label">Password</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button class="btn btn-custom btn-lg">Register now</button>
+                                        <button class="btn btn-custom btn-lg" (click)="Register(RegisterForm)">Register now</button>
                                     </div>
                                 </div>
                             </div>
