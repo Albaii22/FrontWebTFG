@@ -1,0 +1,158 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f8fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #1da1f2;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+aside {
+    width: 25%;
+    padding: 20px;
+}
+
+.profile-card {
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.sidebar-links {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-links li a {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #1da1f2;
+    border-radius: 5px;
+    text-align: center;
+}
+
+main {
+    width: 75%;
+    padding: 20px;
+}
+
+.tweet {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.tweet-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tweet-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+footer {
+    background-color: #1da1f2;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    main {
+        width: 100%;
+    }
+
+    header nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    header nav ul li {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    header .logo {
+        font-size: 1.2em;
+    }
+
+    .tweet-header img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .profile-card img {
+        width: 80px;
+        height: 80px;
+    }
+}
