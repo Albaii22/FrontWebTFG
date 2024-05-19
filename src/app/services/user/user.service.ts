@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { userI } from '../../interfaces/user.interface';
 import { jwtDecode } from 'jwt-decode';
 
@@ -9,23 +9,40 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class UserService {
 
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = 'http://localhost:8082/api/users';
 
   constructor(private http: HttpClient) { }
 
-  getUsuarioIdByUsername(username: string): Observable<number> {
+  getUsuarioIdByUsername(username: string | null): Observable<any> {
     const url = `${this.apiUrl}/username/${username}/id`;
-    return this.http.get<number>(url);
+    return this.http.get<any>(url);
   }
 
-  getDataFromToken(){
-    const token: userI = jwtDecode(localStorage.getItem('authToken')!);
-    console.log(token)
+  getDataFromToken(): userI | null {
+    const tokenString = this.getToken();
+    if (tokenString) {
+      const token: userI = jwtDecode(tokenString);
+      console.log(token);
+      return token;
+    }
+    return null;
   }
 
-  getUsernameFromToken(){
-    const token: userI = jwtDecode(localStorage.getItem('authToken')!);
-    return token.username;
+  getUsernameFromToken(): string | null {
+    const tokenString = this.getToken();
+    if (tokenString) {
+      const token: userI = jwtDecode(tokenString);
+      return token.username;
+    }
+    return null;
   }
-  
+
+  private getToken(): string | null {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('authToken');
+    } else {
+      console.warn('localStorage is not available.');
+      return null;
+    }
+  }
 }
