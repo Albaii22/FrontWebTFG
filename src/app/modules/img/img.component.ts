@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../services/user/user.service';
 import { NgIf } from '@angular/common';
-import { userI } from '../../../interfaces/user.interface';
+import { userI } from '../../interfaces/user.interface';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-img',
@@ -17,7 +18,11 @@ export class ImgComponent implements OnInit{
   profileImageUrl: SafeUrl | null = null;
   user: userI | null = null;
 
-  constructor(private userService: UserService, private sanitizer: DomSanitizer) {}
+  constructor(
+    private userService: UserService,
+    private sanitizer: DomSanitizer,
+    private tokenService: TokenService // Inject TokenService
+  ) {}
 
   ngOnInit(): void {
     const username = this.userService.getUsernameFromToken();
