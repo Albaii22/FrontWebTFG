@@ -9,3 +9,4 @@ export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'home',  component: HomeComponent},
 ];
+    
