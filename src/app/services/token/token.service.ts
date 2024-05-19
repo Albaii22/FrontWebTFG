@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +9,28 @@ export class TokenService {
 
   constructor() { }
 
-  getToken(): string | null | any {
-    return sessionStorage.getItem(this.tokenKey);
+  getToken(): string | null {
+    if (typeof sessionStorage !== 'undefined') {
+      return sessionStorage.getItem(this.tokenKey);
+    } else {
+      console.warn('sessionStorage is not available.');
+      return null;
+    }
   }
 
   setToken(token: string): void {
-    sessionStorage.setItem(this.tokenKey, token);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(this.tokenKey, token);
+    } else {
+      console.warn('sessionStorage is not available.');
+    }
   }
 
   removeToken(): void {
-    sessionStorage.removeItem(this.tokenKey);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(this.tokenKey);
+    } else {
+      console.warn('sessionStorage is not available.');
+    }
   }
 }

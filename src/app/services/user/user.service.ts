@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { userI } from '../../interfaces/user.interface';
 import { jwtDecode } from 'jwt-decode';
+import { TokenService } from '../token/token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,16 @@ export class UserService {
 
   private apiUrl = 'http://localhost:8082/api/users';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient , private tokenService: TokenService) { }
 
   getUsuarioIdByUsername(username: string | null): Observable<any> {
     const url = `${this.apiUrl}/username/${username}/id`;
     return this.http.get<any>(url);
+  }
+
+  getUserById(id: number): Observable<userI> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<userI>(url);
   }
 
   uploadProfileImage(id: number, file: File): Observable<any> {
@@ -26,7 +32,7 @@ export class UserService {
   }
 
   getDataFromToken(): userI | null {
-    const tokenString = this.getToken();
+    const tokenString = this.tokenService.getToken();
     if (tokenString) {
       const token: userI = jwtDecode(tokenString);
       console.log(token);
@@ -36,7 +42,7 @@ export class UserService {
   }
 
   getUsernameFromToken(): string | null {
-    const tokenString = this.getToken();
+    const tokenString = this.tokenService.getToken();
     if (tokenString) {
       const token: userI = jwtDecode(tokenString);
       return token.username;
@@ -44,12 +50,4 @@ export class UserService {
     return null;
   }
 
-  private getToken(): string | null {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('authToken');
-    } else {
-      console.warn('localStorage is not available.');
-      return null;
-    }
-  }
 }
