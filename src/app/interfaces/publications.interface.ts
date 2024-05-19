@@ -1,7 +1,6 @@
 export interface PublicationI {
-    id: number;
     content: string;
-    timestamp: Date;
-    userId: number;
+    vote_count: number;
+    comments: any[];
   }
   
