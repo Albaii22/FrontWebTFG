@@ -21,18 +21,4 @@ export class TokenService {
   removeToken(): void {
     localStorage.removeItem(this.tokenKey);
   }
-
-  decodeToken(): any {
-    const token = this.getToken();
-    if (token) {
-      try {
-        return jwtDecode(token);
-      } catch (error) {
-        console.error('Error decoding token', error);
-        return null;
-      }
-    }
-    return null;
-  }
-
 }
