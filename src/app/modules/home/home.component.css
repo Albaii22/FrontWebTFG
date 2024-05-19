@@ -21,6 +21,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 header .logo {
@@ -45,7 +50,7 @@ header nav ul li a {
     display: flex;
     padding: 20px;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 80px auto 0; /* Added margin to account for fixed header */
     flex: 1;
 }
 
@@ -60,6 +65,7 @@ aside {
     text-align: center;
     border-radius: 10px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-card img {
@@ -82,6 +88,7 @@ aside {
     color: #1da1f2;
     border-radius: 5px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 main {
@@ -97,6 +104,7 @@ main {
     display: flex;
     align-items: flex-start;
     gap: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .new-tweet img {
@@ -134,6 +142,12 @@ main {
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.tweet:hover {
+    transform: translateY(-5px);
 }
 
 .tweet-header {
@@ -147,6 +161,17 @@ main {
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+.tweet-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.tweet-content {
+    font-size: 1em;
+    line-height: 1.5;
+    color: #333;
 }
 
 .tweet-actions {
@@ -166,6 +191,7 @@ main {
     display: flex;
     align-items: center;
     gap: 5px;
+    transition: background-color 0.2s;
 }
 
 .tweet-actions button:hover {
@@ -219,3 +245,4 @@ footer {
         height: 80px;
     }
 }
+ 
