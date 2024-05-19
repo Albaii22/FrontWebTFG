@@ -10,8 +10,8 @@ export class TokenService {
   constructor() { }
 
   getToken(): string | null {
-    if (typeof sessionStorage !== 'undefined') {
-      return sessionStorage.getItem(this.tokenKey);
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem(this.tokenKey);
     } else {
       console.warn('sessionStorage is not available.');
       return null;
@@ -19,16 +19,16 @@ export class TokenService {
   }
 
   setToken(token: string): void {
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.setItem(this.tokenKey, token);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(this.tokenKey, token);
     } else {
       console.warn('sessionStorage is not available.');
     }
   }
 
   removeToken(): void {
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem(this.tokenKey);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(this.tokenKey);
     } else {
       console.warn('sessionStorage is not available.');
     }
