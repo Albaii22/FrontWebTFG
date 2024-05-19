@@ -18,6 +18,13 @@ export class UserService {
     return this.http.get<any>(url);
   }
 
+  uploadProfileImage(id: number, file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
+    const url = `${this.apiUrl}/${id}/uploadProfileImage`;
+    return this.http.post<any>(url, formData);
+  }
+
   getDataFromToken(): userI | null {
     const tokenString = this.getToken();
     if (tokenString) {
