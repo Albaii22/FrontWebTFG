@@ -156,6 +156,12 @@ main {
     margin-bottom: 10px;
 }
 
+.tweet-header span {
+    font-size: 15px;
+    margin-right: 10px;
+    color: grey;
+}
+
 .tweet-header img {
     width: 50px;
     height: 50px;
