@@ -31,4 +31,9 @@ export class PublicationsService {
   deletePublication(id: number): Observable<void> {
     return this.http.delete<void>(`${this.urlPublications}/${id}`);
   }
+
+  getUsernameByPublicationId(publicationId: number): Observable<string> {
+    const url = `${this.urlPublications}/${publicationId}/username`;
+    return this.http.get<string>(url);
+  }
 }
