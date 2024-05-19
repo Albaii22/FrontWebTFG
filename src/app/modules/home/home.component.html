@@ -1,4 +1,3 @@
-
 <header>
     <div class="logo">FlowVerse</div>
     <nav>
@@ -14,7 +13,7 @@
     <aside>
         <div class="profile-card">
             <img src="profile.jpg" alt="Perfil">
-            <h2>Nombre Usuario</h2>
+            <h2>{{ username }}</h2>
             <p>usuario</p>
         </div>
         <ul class="sidebar-links">
@@ -26,18 +25,19 @@
 
     <main>
         <div class="new-tweet">
-            <textarea placeholder="¿Qué está pasando?"></textarea>
-            <button>Publicar</button>
+            <textarea [(ngModel)]="tweetContent" placeholder="¿Qué está pasando?"></textarea>
+            <button (click)="createPublication()">Publicar</button>
         </div>
-        <div class="tweet">
+        
+        <div *ngFor="let publication of publications" class="tweet">
             <div class="tweet-header">
                 <img src="profile.jpg" alt="Perfil">
-                <div>
-                    <h3>Nombre Usuario</h3>
-                    <p>usuario - Hace 2 horas</p>
+                <div class="tweet-user-info">
+                    <h3>username</h3>
+                    <p>{{ getTimeSince(publication.timestamp) }}</p>
                 </div>
             </div>
-            <p>Este es el contenido del tweet.</p>
+            <p class="tweet-content">{{ publication.content }}</p>
             <div class="tweet-actions">
                 <button class="comment-btn"><i class="fas fa-comment"></i> Comentar</button>
                 <button class="like-btn"><i class="fas fa-heart"></i> Like</button>
@@ -49,5 +49,3 @@
 <footer>
     <p>&copy; 2024 FlowVerse. Todos los derechos reservados.</p>
 </footer>
-
-

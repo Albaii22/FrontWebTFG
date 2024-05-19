@@ -1,31 +1,61 @@
 import { Component, OnInit } from '@angular/core';
-import { TokenService } from '../../services/token/token.service';
 import { UserService } from '../../services/user/user.service';
 import { PublicationI } from '../../interfaces/publications.interface';
 import { PublicationsService } from '../../services/publications/publications.service';
+import { HelpersService } from '../../services/helpers/helpers.service';
+import { FormsModule } from '@angular/forms';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [FormsModule, NgFor],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
 
   username = this.userService.getUsernameFromToken();
+  tweetContent: string = '';
+  publications: PublicationI[] = [];
 
-  constructor( private userService: UserService, private publicationsService: PublicationsService ) {}
+  constructor(
+    private userService: UserService,
+    private publicationsService: PublicationsService,
+    private helperService: HelpersService
+  ) {}
 
   ngOnInit(): void {
-    console.log(this.userService.getUsuarioIdByUsername(this.username).subscribe(data => console.log(data)));
-   
+    this.userService.getUsuarioIdByUsername(this.username).subscribe(
+      data => this.helperService.setUserId(data)
+    );
+    this.loadPublications();
   }
 
-  createPublication(publication: PublicationI, userId: number): void {
-    this.publicationsService.createPublication(publication, userId).subscribe(
+  loadPublications(): void {
+    this.publicationsService.getAllPublications().subscribe(
+      data => {
+        this.publications = data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      }
+    );
+  }
+
+  createPublication(): void {
+    const newPublication: PublicationI = {
+      content: this.tweetContent,
+      vote_count: 0,
+      timestamp: new Date().toISOString(), 
+      comments: [{
+        content: '',  
+        publicationId: 0
+      }]
+    };
+
+    this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
       (response) => {
         console.log('Publication created:', response);
+        this.tweetContent = '';
+        this.loadPublications(); 
       },
       (error) => {
         console.error('Error creating publication:', error);
@@ -33,6 +63,26 @@ export class HomeComponent implements OnInit{
     );
   }
 
- 
+  getTimeSince(timestamp: string): string {
+    const now = new Date();
+    const publicationDate = new Date(timestamp);
+    const seconds = Math.floor((now.getTime() - publicationDate.getTime()) / 1000);
 
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + ' años';
+
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + ' meses';
+
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + ' días';
+
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + ' horas';
+
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + ' minutos';
+
+    return Math.floor(seconds) + ' segundos';
+  }
 }
