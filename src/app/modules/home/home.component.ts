@@ -14,10 +14,10 @@ import { NgFor } from '@angular/common';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
   username = this.userService.getUsernameFromToken();
   tweetContent: string = '';
   publications: PublicationI[] = [];
+  publicationUsernames: { [key: number]: string } = {};
 
   constructor(
     private userService: UserService,
@@ -35,29 +35,41 @@ export class HomeComponent implements OnInit {
   loadPublications(): void {
     this.publicationsService.getAllPublications().subscribe(
       data => {
+        console.log(data);
         this.publications = data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        this.loadUsernames();
       }
     );
   }
 
+  loadUsernames(): void {
+    this.publications.forEach(publication => {
+      this.userService.getUserById(publication.user_id).subscribe(user => {
+        this.publicationUsernames[publication.id] = user.username;
+      });
+    });
+  }
+
   createPublication(): void {
     const newPublication: PublicationI = {
+      id: 0,
+      user_id: 0,
       content: this.tweetContent,
       vote_count: 0,
-      timestamp: new Date().toISOString(), 
+      timestamp: new Date().toISOString(),
       comments: [{
-        content: '',  
+        content: '',
         publicationId: 0
       }]
     };
 
     this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
-      (response) => {
+      response => {
         console.log('Publication created:', response);
         this.tweetContent = '';
-        this.loadPublications(); 
+        this.loadPublications();
       },
-      (error) => {
+      error => {
         console.error('Error creating publication:', error);
       }
     );
