@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { LoginI } from '../../interfaces/login.interface';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-login',
@@ -21,12 +22,14 @@ export class LoginComponent {
     password: ''
   }
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router , private tokenService: TokenService) {}
 
   Login(form: LoginI): void {
     if (this.LoginForm.username !== '' || this.LoginForm.password !== '') {
       this.authService.Login(form).subscribe({
         next: (data) => {
+          this.tokenService.setToken(data.token);
+          console.log(data);
           Swal.fire({
             icon: 'success',
             title: 'Successful Login!',
