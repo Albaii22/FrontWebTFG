@@ -1,11 +1,10 @@
+
 <header>
     <div class="logo">FlowVerse</div>
     <nav>
         <ul>
             <li><a href="#">Inicio</a></li>
             <li><a href="#">Explorar</a></li>
-            <li><a href="#">Notificaciones</a></li>
-            <li><a href="#">Mensajes</a></li>
             <li><a href="#">Perfil</a></li>
         </ul>
     </nav>
@@ -26,6 +25,10 @@
     </aside>
 
     <main>
+        <div class="new-tweet">
+            <textarea placeholder="¿Qué está pasando?"></textarea>
+            <button>Publicar</button>
+        </div>
         <div class="tweet">
             <div class="tweet-header">
                 <img src="profile.jpg" alt="Perfil">
@@ -35,11 +38,16 @@
                 </div>
             </div>
             <p>Este es el contenido del tweet.</p>
+            <div class="tweet-actions">
+                <button class="comment-btn"><i class="fas fa-comment"></i> Comentar</button>
+                <button class="like-btn"><i class="fas fa-heart"></i> Like</button>
+            </div>
         </div>
-        <!-- Más tweets aquí -->
     </main>
 </div>
 
 <footer>
     <p>&copy; 2024 FlowVerse. Todos los derechos reservados.</p>
 </footer>
+
+
