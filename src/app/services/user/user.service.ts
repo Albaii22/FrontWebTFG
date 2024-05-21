@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { userI } from '../../interfaces/user.interface';
 import { TokenService } from '../token/token.service';
 import { jwtDecode } from 'jwt-decode';
+import { userUpdateI } from '../../interfaces/userUpdate.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class UserService {
     return this.http.put<userI>(url, { aboutMe });
   }
 
-  updateUsuario(id: number, user: userI): Observable<userI> {
+  updateUsuario(id: number, user: userUpdateI): Observable<userI> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.put<userI>(url, user);
   }

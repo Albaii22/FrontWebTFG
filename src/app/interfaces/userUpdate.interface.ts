@@ -1,5 +1,6 @@
-export interface userUpdate {
+export interface userUpdateI {
     username: string,
-    profileImageUrl?: string;
     aboutMe: string,
+    profileImageUrl: string;
+    
 }

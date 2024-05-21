@@ -9,6 +9,7 @@ import { PublicationsService } from '../../services/publications/publications.se
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { userI } from '../../interfaces/user.interface';
+import { userUpdateI } from '../../interfaces/userUpdate.interface';
 
 @Component({
   selector: 'app-profile',
@@ -250,11 +251,9 @@ export class ProfileComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed && result.value) {
         const { username, aboutMe } = result.value;
-        const updatedUser: userI = {
+        const updatedUser: userUpdateI = {
           username,
           aboutMe,
-          email: '', // Populate with the existing email, you may need to fetch this data
-          registration_date: this.registrationDate,
           profileImageUrl: this.profileImageUrl
         };
 
