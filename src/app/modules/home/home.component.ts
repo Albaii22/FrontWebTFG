@@ -34,6 +34,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUsuarioIdByUsername(this.username).subscribe(
       data => this.helperService.setUserId(data)
+     
     );
     this.loadPublications();
   }
