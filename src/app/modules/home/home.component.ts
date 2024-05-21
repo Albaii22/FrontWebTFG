@@ -133,4 +133,86 @@ export class HomeComponent implements OnInit {
   navigateToHome(): void {
     this.helperService.navigateTo('/home');
   }
+
+  confirmDeletePublication(publicationId: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deletePublication(publicationId);
+        this.loadPublications();
+      }
+    });
+  }
+
+  deletePublication(publicationId: number): void {
+    this.publicationsService.deletePublication(publicationId).subscribe(
+      () => {
+        Swal.fire(
+          'Deleted!',
+          'Your publication has been deleted.',
+          'success'
+        );
+        this.loadPublications();
+      },
+      error => {
+        console.error('Error deleting publication:', error);
+        Swal.fire(
+          'Error!',
+          'There was an error deleting your publication.',
+          'error'
+        );
+      }
+    );
+  }
+
+  editPublication(publication: PublicationI): void {
+    Swal.fire({
+      title: 'Edit Post',
+      input: 'textarea',
+      inputValue: publication.content,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      preConfirm: (content) => {
+        if (content === '') {
+          Swal.showValidationMessage('Please enter a tweet.');
+          return false;
+        }
+        return content;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        this.updatePublication(publication.id, result.value);
+      }
+    });
+  }
+
+  updatePublication(publicationId: number, newContent: string): void {
+    const updatedPublication: PublicationI = { ...this.publications.find(pub => pub.id === publicationId), content: newContent } as PublicationI;
+
+    this.publicationsService.updatePublication(publicationId, updatedPublication).subscribe(
+      () => {
+        Swal.fire(
+          'Updated!',
+          'Your publication has been updated.',
+          'success'
+        );
+        this.loadPublications();
+      },
+      error => {
+        console.error('Error updating publication:', error);
+        Swal.fire(
+          'Error!',
+          'There was an error updating your publication.',
+          'error'
+        );
+      }
+    );
+  }
 }

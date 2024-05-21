@@ -1,45 +1,53 @@
 <header>
-    <app-navbar></app-navbar>
-  </header>
-  
-  <div class="container">
-    <aside>
+  <app-navbar></app-navbar>
+</header>
+
+<div class="container">
+  <aside>
       <div class="profile-card">
-        <h2>{{ username }}</h2>
+          <h2>{{ username }}</h2>
       </div>
       <ul class="sidebar-links">
-        <li><button (click)="navigateToHome()">Home</button></li>
-        <li><button href="#">A quién seguir</button></li>
-        <li><button (click)="navigateToProfile()">Perfil</button></li>
-        <li><button (click)="showNewPostModal()">New Post</button></li>
+          <li><button (click)="navigateToHome()">Home</button></li>
+          <li><button href="#">A quién seguir</button></li>
+          <li><button (click)="navigateToProfile()">Perfil</button></li>
+          <li><button (click)="showNewPostModal()">New Post</button></li>
       </ul>
-    </aside>
-  
-    <main>
+  </aside>
+
+  <main>
       <div class="scrollable-content">
-        <div class="new-tweet">
-          <textarea [(ngModel)]="tweetContent" placeholder="What's happening?"></textarea>
-          <button (click)="createPublication()">Publicar</button>
-        </div>
-  
-        <div *ngFor="let publication of publications" class="tweet">
-          <div class="tweet-header">
-            <img src="../../assets/img/profile.png" alt="Perfil">
-            <div class="tweet-user-info">
-              <h3>{{ publicationUsernames[publication.id] }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
-            </div>
+          <div class="new-tweet">
+              <textarea [(ngModel)]="tweetContent" placeholder="What's happening?"></textarea>
+              <button (click)="createPublication()">Publicar</button>
           </div>
-          <p class="tweet-content">{{ publication.content }}</p>
-          <div class="tweet-actions">
-            <button class="comment-btn"><i class="fas fa-comment"></i> Comentar</button>
-            <button class="like-btn"><i class="fas fa-heart"></i> Like</button>
+
+          <div *ngFor="let publication of publications" class="tweet">
+              <div class="tweet-header">
+                  <div class="left-section">
+                      <img src="../../assets/img/profile.png" alt="Perfil">
+                      <div class="tweet-user-info">
+                          <h3>{{ publicationUsernames[publication.id] }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
+                      </div>
+                  </div>
+                  <div class="dropdown">
+                      <button class="dropdown-toggle">•••</button>
+                      <div class="dropdown-menu">
+                          <button (click)="editPublication(publication)">Edit Publication</button>
+                          <button (click)="confirmDeletePublication(publication.id)">Delete Publication</button>
+                      </div>
+                  </div>
+              </div>
+              <p class="tweet-content">{{ publication.content }}</p>
+              <div class="tweet-actions">
+                  <button class="comment-btn"><i class="fas fa-comment"></i> Comentar</button>
+                  <button class="like-btn"><i class="fas fa-heart"></i> Like</button>
+              </div>
           </div>
-        </div>
       </div>
-    </main>
-  </div>
-  
-  <footer>
-    <app-footer></app-footer>
-  </footer>
-  
+  </main>
+</div>
+
+<footer>
+  <app-footer></app-footer>
+</footer>
