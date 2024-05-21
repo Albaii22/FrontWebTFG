@@ -20,6 +20,10 @@ export class PublicationsService {
     return this.http.get<PublicationI>(`${this.urlPublications}/${id}`);
   }
 
+  getPublicationsByUserId(id: number): Observable<PublicationI[]> {
+    return this.http.get<PublicationI[]>(`${this.urlPublications}/user/${id}`);
+  }
+
   createPublication(publication: PublicationI, userId: number): Observable<PublicationI> {
     return this.http.post<PublicationI>(`${this.urlPublications}/${userId}`, publication);
   }
