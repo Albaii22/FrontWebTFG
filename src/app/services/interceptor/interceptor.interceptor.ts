@@ -3,7 +3,7 @@ import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export const interceptorJwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-    let token: string | null = sessionStorage.getItem("authToken");
+    let token: string | null = localStorage.getItem("authToken");
     console.log(token);
     if (token && token !== "") {
         req = req.clone({

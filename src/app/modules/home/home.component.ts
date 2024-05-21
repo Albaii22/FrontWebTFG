@@ -5,11 +5,13 @@ import { PublicationsService } from '../../services/publications/publications.se
 import { HelpersService } from '../../services/helpers/helpers.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, NgFor],
+  imports: [FormsModule, NgFor, NgScrollbarModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -50,10 +52,32 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  showNewPostModal(): void {
+    Swal.fire({
+      title: 'New Post',
+      input: 'textarea',
+      inputPlaceholder: 'What\'s happening?',
+      showCancelButton: true,
+      confirmButtonText: 'Post',
+      preConfirm: (content) => {
+        if (content === '') {
+          Swal.showValidationMessage('Please enter a tweet.');
+          return false;
+        }
+        return content;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        this.tweetContent = result.value;
+        this.createPublication();
+      }
+    });
+  }
+
   createPublication(): void {
     const newPublication: PublicationI = {
       id: 0,
-      user_id: 0,
+      user_id: this.helperService.getUserId(),
       content: this.tweetContent,
       vote_count: 0,
       timestamp: new Date().toISOString(),
