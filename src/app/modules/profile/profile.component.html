@@ -1,0 +1,31 @@
+<header>
+    <app-navbar></app-navbar>
+  </header>
+  
+  <div class="container">
+    <aside>
+      <div class="profile-card">
+        <h2>{{ username }}</h2>
+      </div>
+      <ul class="sidebar-links">
+        <li><button href="#">Tendencias</button></li>
+        <li><button href="#">A quién seguir</button></li>
+        <li><button href="#">Perfil</button></li>
+        <li><button (click)="showNewPostModal()">New Post</button></li>
+      </ul>
+    </aside>
+  
+    <main>
+      <div class="scrollable-content">
+        <div class="profile-details">
+          <h2>Perfil de {{ username }}</h2>
+          <p>Detalles del perfil del usuario...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <footer>
+    <app-footer></app-footer>
+  </footer>
+  
