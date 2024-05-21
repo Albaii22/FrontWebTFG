@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f0f2f5;
+  background-color: #333;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,8 +10,15 @@ body {
 
 h1 {
   font-size: 30px;
-  font-weight: 500;
+  font-weight: bold;
   text-align: center;
+  color: #9DEDFF;
+}
+
+.text-continued{
+  color: #9DEDFF;
+  text-align: center;
+  font-weight: bold;
 }
 
 .text-bg-custom {
@@ -28,18 +35,20 @@ h1 {
 
 .card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #333;
 }
 
 .card-body {
-  background-color: #ffffff;
-}
-
-h3 {
-  color: #333333;
+  background-color: #333;
+  border-radius: 20%;
 }
 
 p {
   color: #666666;
+}
+
+.text-center{
+  color: #A3B1BF;
 }
 
 .link-custom {
@@ -57,29 +66,43 @@ p {
 }
 
 .btn-custom {
-  background-color: #6c757d;
-  border-color: #6c757d;
+  background-color: #FF89A9;
+  border: 3px solid #E4E2DD;
+  color: #2b2b2b;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .btn-custom:hover {
-  background-color: #5a6268;
-  border-color: #545b62;
+  background-color: #ff9bb5;
+  border: 3px solid #E4E2DD;
+  cursor: pointer;
+}
+
+.bg-custom {
+  background-color: #2b2b2b;
 }
 
 a {
-  color: #6c757d;
+  color: #9DEDFF;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 a:hover {
-  color: #5a6268;
-  text-decoration: none;
+  color: #9DEDFF;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .link-custom {
-  color: #6c757d;
+  color: #9DEDFF;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .link-custom:hover {
-  color: #5a6268;
-  text-decoration: none;
+  color: #9DEDFF;
+  cursor: pointer;
+  text-decoration: underline;
 }
