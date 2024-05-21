@@ -9,6 +9,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import Swal from 'sweetalert2';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +27,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private userService: UserService,
     private publicationsService: PublicationsService,
-    private helperService: HelpersService
+    private helperService: HelpersService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -122,5 +124,13 @@ export class HomeComponent implements OnInit {
     if (interval > 1) return Math.floor(interval) + ' minutos';
 
     return Math.floor(seconds) + ' segundos';
+  }
+
+  navigateToProfile(): void {
+    this.helperService.navigateTo('/profile');
+  }
+
+  navigateToHome(): void {
+    this.helperService.navigateTo('/home');
   }
 }

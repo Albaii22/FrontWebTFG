@@ -73,6 +73,14 @@ export class ProfileComponent {
 
   loadUserPublications(): void {
     console.log("user publications")
-}
+  }
+
+  navigateToProfile(): void {
+    this.helperService.navigateTo('/profile');
+  }
+
+  navigateToHome(): void {
+    this.helperService.navigateTo('/home');
+  }
 
 }

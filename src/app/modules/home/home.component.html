@@ -8,9 +8,9 @@
         <h2>{{ username }}</h2>
       </div>
       <ul class="sidebar-links">
-        <li><button href="#">Tendencias</button></li>
+        <li><button (click)="navigateToHome()">Home</button></li>
         <li><button href="#">A quién seguir</button></li>
-        <li><button href="#">Perfil</button></li>
+        <li><button (click)="navigateToProfile()">Perfil</button></li>
         <li><button (click)="showNewPostModal()">New Post</button></li>
       </ul>
     </aside>
