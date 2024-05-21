@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { LoginI } from '../../interfaces/login.interface';
 import { TokenService } from '../../services/token/token.service';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-register',
@@ -24,30 +25,71 @@ export class RegisterComponent {
     password: ''
   }
 
-  constructor(private authService: AuthService, private router: Router , private tokenService: TokenService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private tokenService: TokenService,
+    private userService: UserService
+  ) {}
 
   Register(form: RegisterI): void {
     if (this.RegisterForm.username !== '' && this.RegisterForm.password !== '') {
       this.authService.Register(form).subscribe({
         next: (data) => {
           this.tokenService.setToken(data.token);
-          Swal.fire({
-            icon: 'success',
-            title: 'Successful register!',
-            text: 'You have registered successfully.',
-          });
           const loginForm: LoginI = {
             username: form.username,
             password: form.password
           };
           this.authService.Login(loginForm).subscribe({
             next: (loginData) => {
+              this.tokenService.setToken(loginData.token);
               Swal.fire({
-                icon: 'success',
-                title: 'Auto Login Successful!',
-                text: 'You have logged in successfully.',
+                title: 'Welcome!',
+                text: 'Please tell us more about yourself.',
+                input: 'textarea',
+                inputPlaceholder: 'Write something about yourself...',
+                showCancelButton: false,
+                confirmButtonText: 'Save',
+                preConfirm: (aboutMe) => {
+                  if (aboutMe.trim() === '') {
+                    Swal.showValidationMessage('Please write something about yourself.');
+                    return false;
+                  }
+                  return aboutMe;
+                }
+              }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                  this.userService.getUsuarioIdByUsername(this.RegisterForm.username).subscribe({
+                    next: (userIdData) => {
+                      this.userService.updateAboutMe(userIdData, result.value).subscribe({
+                        next: () => {
+                          Swal.fire({
+                            icon: 'success',
+                            title: 'Thanks!!',
+                            text: 'Flow to ur vers :)',	
+                          });
+                          this.router.navigate(['/home']);
+                        },
+                        error: (err) => {
+                          Swal.fire({
+                            icon: 'error',
+                            title: 'Update failed',
+                            text: 'There was an error updating your About Me section.',
+                          });
+                        }
+                      });
+                    },
+                    error: (err) => {
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'User ID not found',
+                        text: 'There was an error retrieving your user ID.',
+                      });
+                    }
+                  });
+                }
               });
-              this.router.navigate(['/home']);
             },
             error: (loginErr) => {
               Swal.fire({

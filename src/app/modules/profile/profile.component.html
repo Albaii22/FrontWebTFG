@@ -20,8 +20,9 @@
       <img [src]="profileImageUrl" alt="Profile Image">
       <div class="profile-info">
         <h2>{{ username }}</h2>
+        <p class="about-me"> {{ aboutMe }}</p>
         <p class="registration-date">Registered on {{ registrationDate | date }}</p>
-        <button (click)="showNewPostModal()">Editar Perfil</button>
+        <button (click)="editProfile()">Editar Perfil</button>
       </div>
     </div>
 

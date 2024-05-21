@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { userI } from '../../interfaces/user.interface';
-import { jwtDecode } from 'jwt-decode';
 import { TokenService } from '../token/token.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class UserService {
 
   private apiUrl = 'http://localhost:8082/api/users';
 
-  constructor(private http: HttpClient , private tokenService: TokenService) { }
+  constructor(private http: HttpClient, private tokenService: TokenService) { }
 
   getUsuarioIdByUsername(username: string | null): Observable<any> {
     const url = `${this.apiUrl}/username/${username}/id`;
@@ -48,6 +48,21 @@ export class UserService {
       return token.username;
     }
     return null;
+  }
+
+  getUserByUsername(username: string): Observable<userI> {
+    const url = `${this.apiUrl}/username/${username}`;
+    return this.http.get<userI>(url);
+  }
+
+  updateAboutMe(userId: number, aboutMe: string): Observable<userI> {
+    const url = `${this.apiUrl}/${userId}/aboutMe`;
+    return this.http.put<userI>(url, { aboutMe });
+  }
+
+  updateUsuario(id: number, user: userI): Observable<userI> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<userI>(url, user);
   }
 
 }

@@ -8,6 +8,7 @@ import { PublicationI } from '../../interfaces/publications.interface';
 import { PublicationsService } from '../../services/publications/publications.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { userI } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +23,7 @@ export class ProfileComponent implements OnInit {
   userPublications: PublicationI[] = [];
   registrationDate: Date = new Date();
   profileImageUrl: string = '../../assets/img/profile.png';
+  aboutMe: String = '';
 
   constructor(
     private userService: UserService,
@@ -39,20 +41,20 @@ export class ProfileComponent implements OnInit {
         this.loadUserPublications();
       },
       error => {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user id data:', error);
       }
     );
 
     this.userService.getUserById(this.helperService.getUserId()).subscribe(
       user => {
         this.registrationDate = new Date(user.registration_date);
+        console.log(user);
+        this.aboutMe = user.aboutMe;
       },
       error => {
         console.error('Error fetching user data:', error);
       }
     );
-
-    
   }
 
   showNewPostModal(): void {
@@ -225,5 +227,57 @@ export class ProfileComponent implements OnInit {
         );
       }
     );
+  }
+
+  editProfile(): void {
+    Swal.fire({
+      title: 'Edit Profile',
+      html: `
+        <input id="swal-input1" class="swal2-input" placeholder="Username" value="${this.username}">
+        <textarea id="swal-input2" class="swal2-input" placeholder="About Me">${this.aboutMe}</textarea>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      preConfirm: () => {
+        const username = (document.getElementById('swal-input1') as HTMLInputElement).value;
+        const aboutMe = (document.getElementById('swal-input2') as HTMLTextAreaElement).value;
+        if (!username || !aboutMe) {
+          Swal.showValidationMessage('Both fields are required');
+          return false;
+        }
+        return { username, aboutMe };
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const { username, aboutMe } = result.value;
+        const updatedUser: userI = {
+          username,
+          aboutMe,
+          email: '', // Populate with the existing email, you may need to fetch this data
+          registration_date: this.registrationDate,
+          profileImageUrl: this.profileImageUrl
+        };
+
+        this.userService.updateUsuario(this.helperService.getUserId(), updatedUser).subscribe(
+          () => {
+            Swal.fire(
+              'Updated!',
+              'Your profile has been updated.',
+              'success'
+            );
+            this.username = username;
+            this.aboutMe = aboutMe;
+          },
+          error => {
+            console.error('Error updating profile:', error);
+            Swal.fire(
+              'Error!',
+              'There was an error updating your profile.',
+              'error'
+            );
+          }
+        );
+      }
+    });
   }
 }
