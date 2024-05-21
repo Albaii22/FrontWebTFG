@@ -7,11 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import Swal from 'sweetalert2';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, NgFor, NgScrollbarModule],
+  imports: [FormsModule, NgFor, NgScrollbarModule , NavbarComponent , FooterComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
