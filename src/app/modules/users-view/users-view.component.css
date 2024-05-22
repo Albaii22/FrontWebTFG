@@ -1,0 +1,318 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f8fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  header {
+    background-color: #1da1f2;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  
+  header .logo {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  
+  header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+  }
+  
+  header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .container {
+    display: flex;
+    max-width: 1200px;
+    margin: 80px auto 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  aside {
+    width: 25%;
+    padding: 20px;
+    overflow-y: auto;
+    margin-right: 20px;
+    flex-shrink: 0;
+  }
+  
+  .profile-card {
+    background-color: #fff;
+    padding: 5px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  .profile-card h2 {
+    margin-top: 10px;
+  }
+  
+  .profile-card .registration-date {
+    color: gray;
+    font-size: 0.9em;
+  }
+  
+  .sidebar-links {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-links li button {
+    display: block;
+    border-color: transparent;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #1da1f2;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar-links li button:hover {
+    display: block;
+    border-color: transparent;
+    width: 100%;
+    padding: 10px;
+    background-color: rgb(75, 131, 233);
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: white;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  main {
+    flex: 1;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 160px);
+  }
+  
+  .user-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .user-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .user-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .user-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  .profile-header .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-header .profile-info h2 {
+    margin: 0;
+  }
+  
+  .profile-header .profile-info .registration-date {
+    margin: 5px 0;
+    color: gray;
+    font-size: 0.9em;
+  }
+  
+  .profile-header .profile-info button {
+    background-color: #1da1f2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  .profile-header .profile-info button:hover {
+    background-color: #0d95e8;
+  }
+  
+  .scrollable-content {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .tweet {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .tweet:hover {
+    transform: translateY(-5px);
+  }
+  
+  .tweet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .tweet-header .left-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .tweet-header span {
+    font-size: 15px;
+    margin-right: 10px;
+    color: grey;
+  }
+  
+  .tweet-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .tweet-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .tweet-content {
+    font-size: 1em;
+    line-height: 1.5;
+    color: #333;
+  }
+  
+  footer {
+    color: #fff;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .scrollable-content::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .scrollable-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .scrollable-content::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+  
+    aside {
+      width: 100%;
+      padding: 10px 0;
+      position: relative;
+      margin-right: 0;
+    }
+  
+    main {
+      width: 100%;
+      margin-left: 0;
+    }
+  
+    header nav ul {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    header nav ul li {
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    header .logo {
+      font-size: 1.2em;
+    }
+  
+    .user-card img, .profile-header img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+  

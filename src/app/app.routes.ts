@@ -4,6 +4,7 @@ import { RegisterComponent } from './modules/register/register.component';
 import { HomeComponent } from './modules/home/home.component';
 import { ImgComponent } from './modules/img/img.component';
 import { ProfileComponent } from './modules/profile/profile.component';
+import { UsersViewComponent } from './modules/users-view/users-view.component';
 
 export const routes: Routes = [
     { path: '' , redirectTo:'login' , pathMatch: 'full'},
@@ -12,5 +13,6 @@ export const routes: Routes = [
     { path: 'home',  component: HomeComponent},
     { path: 'img', component: ImgComponent},
     { path: 'profile', component: ProfileComponent},
+    { path: 'users', component: UsersViewComponent},
 ];
     

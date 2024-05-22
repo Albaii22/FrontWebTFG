@@ -66,4 +66,9 @@ export class UserService {
     return this.http.put<userI>(url, user);
   }
 
+  getAllUsers(): Observable<userI[]> {
+    const url = `${this.apiUrl}`;
+    return this.http.get<userI[]>(url);
+  }
+
 }

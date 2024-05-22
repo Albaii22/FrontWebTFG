@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 })
 export class HelpersService {
   private userId: number =0;
+  private username: string = '';
 
   constructor(private router: Router) { }
 
@@ -19,4 +20,10 @@ export class HelpersService {
   navigateTo(path: string): void {
     this.router.navigate([path]);
   }
+
+  getUsername(){
+    return this.username;
+  }
 }
+
+
