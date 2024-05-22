@@ -135,6 +135,10 @@ export class HomeComponent implements OnInit {
     this.helperService.navigateTo('/home');
   }
 
+  navigateToFollowing() {
+    this.helperService.navigateTo('/users');
+  }
+
   confirmDeletePublication(publicationId: number): void {
     Swal.fire({
       title: 'Are you sure?',

@@ -1,4 +1,5 @@
 export interface userI {
+    id: number,
     username: string,
     profileImageUrl?: string;
     email: string,

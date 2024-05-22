@@ -1,0 +1,58 @@
+<header>
+    <app-navbar></app-navbar>
+  </header>
+  
+  <div class="container">
+    <aside>
+      <div class="profile-card">
+        <h2>{{ username }}</h2>
+      </div>
+      <ul class="sidebar-links">
+        <li><button (click)="navigateToHome()">Home</button></li>
+        <li><button (click)="navigateToFollowing()">A quién seguir</button></li>
+        <li><button (click)="navigateToProfile()">Perfil</button></li>
+        <li><button (click)="showNewPostModal()">New Post</button></li>
+      </ul>
+    </aside>
+  
+    <main>
+      <div *ngIf="selectedUser" class="profile-detail">
+        <div class="profile-header">
+          <img [src]="selectedUser.profileImageUrl" alt="Profile Image">
+          <div class="profile-info">
+            <h2>{{ selectedUser.username }}</h2>
+            <p class="about-me">{{ selectedUser.aboutMe }}</p>
+            <p class="registration-date">Registered on {{ selectedUser.registration_date | date }}</p>
+            <button (click)="closeUserProfile()">Close</button>
+          </div>
+        </div>
+  
+        <div class="scrollable-content">
+          <div *ngFor="let publication of selectedUserPublications" class="tweet">
+            <div class="tweet-header">
+              <div class="left-section">
+                <img [src]="selectedUser.profileImageUrl" alt="Perfil">
+                <div class="tweet-user-info">
+                  <h3>{{ selectedUser.username }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
+                </div>
+              </div>
+            </div>
+            <p class="tweet-content">{{ publication.content }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="!selectedUser" class="user-cards">
+        <div *ngFor="let user of users" class="user-card" (click)="viewUserProfile(user)">
+          <img [src]="user.profileImageUrl" alt="User Image">
+          <h3>{{ user.username }}</h3>
+          <p>{{ user.aboutMe | slice:0:50 }}...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <footer>
+    <app-footer></app-footer>
+  </footer>
+  

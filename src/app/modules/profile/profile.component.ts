@@ -125,6 +125,10 @@ export class ProfileComponent implements OnInit {
     this.helperService.navigateTo('/home');
   }
 
+  navigateToFollowing() {
+    this.helperService.navigateTo('/users');
+  }
+
   getTimeSince(timestamp: string): string {
     const now = new Date();
     const publicationDate = new Date(timestamp);
