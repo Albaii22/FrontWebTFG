@@ -10,9 +10,9 @@ import { TokenService } from '../../services/token/token.service';
   standalone: true,
   imports: [NgIf],
   templateUrl: './img.component.html',
-  styleUrl: './img.component.css'
+  styleUrls: ['./img.component.css']
 })
-export class ImgComponent implements OnInit{
+export class ImgComponent implements OnInit {
   selectedFile: File | null = null;
   userId: number | null = null;
   profileImageUrl: SafeUrl | null = null;
@@ -21,7 +21,7 @@ export class ImgComponent implements OnInit{
   constructor(
     private userService: UserService,
     private sanitizer: DomSanitizer,
-    private tokenService: TokenService // Inject TokenService
+    private tokenService: TokenService 
   ) {}
 
   ngOnInit(): void {
@@ -40,7 +40,7 @@ export class ImgComponent implements OnInit{
     this.userService.getUserById(id).subscribe(user => {
       this.user = user;
       if (user.profileImageUrl) {
-        this.profileImageUrl = this.sanitizer.bypassSecurityTrustUrl(user.profileImageUrl);
+        this.profileImageUrl = this.sanitizeImageUrl(`${user.profileImageUrl}`);
       }
     });
   }
@@ -56,14 +56,20 @@ export class ImgComponent implements OnInit{
   onUpload(): void {
     if (this.selectedFile && this.userId !== null) {
       this.userService.uploadProfileImage(this.userId, this.selectedFile).subscribe(response => {
-        this.profileImageUrl = this.sanitizer.bypassSecurityTrustUrl(response.profileImageUrl);
+        this.profileImageUrl = this.sanitizeImageUrl(response.profileImageUrl);
+        console.log('Image uploaded successfully', response);
+        console.log('Profile Image URL:', response.profileImageUrl);
       }, error => {
         console.error('Error uploading image', error);
       });
     }
   }
-
+  
   sanitizeImageUrl(url: string): SafeUrl {
-    return this.sanitizer.bypassSecurityTrustUrl(url);
+    const fullUrl = `http://localhost:8082/${url}`;
+    console.log('Sanitized Image URL:', fullUrl);
+    return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
   }
+  
+  
 }

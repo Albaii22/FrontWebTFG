@@ -3,10 +3,9 @@
   }
   
   .profile-image {
-    margin-top: 20px;
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
+  
   
