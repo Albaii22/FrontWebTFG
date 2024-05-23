@@ -8,7 +8,7 @@ import { CommentsI } from '../../interfaces/comments.interface';
 })
 export class CommentsService {
 
-  private apiUrl = 'http://localhost:8080/api/comments'; // Cambia la URL según tu configuración
+  private apiUrl = 'http://localhost:8082/api/comments';
 
   constructor(private http: HttpClient) { }
 

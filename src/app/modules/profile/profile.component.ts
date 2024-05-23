@@ -81,10 +81,8 @@ export class ProfileComponent implements OnInit {
           content: this.tweetContent,
           vote_count: 0,
           timestamp: new Date().toISOString(),
-          comments: [{
-            content: '',
-            publicationId: 0
-          }]
+          comments: [
+          ]
         };
 
         this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(

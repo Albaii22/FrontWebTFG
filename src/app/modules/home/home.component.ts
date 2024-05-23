@@ -3,19 +3,40 @@ import { UserService } from '../../services/user/user.service';
 import { PublicationI } from '../../interfaces/publications.interface';
 import { PublicationsService } from '../../services/publications/publications.service';
 import { HelpersService } from '../../services/helpers/helpers.service';
-import { FormsModule } from '@angular/forms';
-import { NgFor } from '@angular/common';
-import { NgScrollbarModule } from 'ngx-scrollbar';
+import { CommentsService } from '../../services/comments/comments.service';
+import { Router } from '@angular/router';
+import { CommentsI } from '../../interfaces/comments.interface';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NewPostComponent } from '../modales/new-post/new-post.component';
+import { CommentComponent } from '../modales/comment/comment.component';
+import { ViewPostComponent } from '../modales/view-post/view-post.component';
+import { EditPostComponent } from '../modales/edit-post/edit-post.component';
 import Swal from 'sweetalert2';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, NgFor, NgScrollbarModule , NavbarComponent , FooterComponent],
   templateUrl: './home.component.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    NewPostComponent,
+    CommentComponent,
+    ViewPostComponent,
+    EditPostComponent,
+    NavbarComponent,
+    FooterComponent
+  ],
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
@@ -23,23 +44,34 @@ export class HomeComponent implements OnInit {
   tweetContent: string = '';
   publications: PublicationI[] = [];
   publicationUsernames: { [key: number]: string } = {};
+  commentContent: string = '';
+  currentPublication: PublicationI | null = null;
+  currentUserId: number = 0;
 
   constructor(
+    private dialog: MatDialog,
     private userService: UserService,
     private publicationsService: PublicationsService,
     private helperService: HelpersService,
+    private commentsService: CommentsService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.userService.getUsuarioIdByUsername(this.username).subscribe(
-      data => this.helperService.setUserId(data)
-     
+      data => {
+        this.helperService.setUserId(data);
+        this.currentUserId = data;
+      }
     );
     this.loadPublications();
-  this.userService.getAllUsers().subscribe(
-    data => console.log(data)
-  )
+    this.userService.getAllUsers().subscribe(
+      data => console.log(data)
+    );
+  }
+
+  isPublicationOwner(userId: number): boolean {
+    return userId === this.currentUserId;
   }
 
   loadPublications(): void {
@@ -61,22 +93,14 @@ export class HomeComponent implements OnInit {
   }
 
   showNewPostModal(): void {
-    Swal.fire({
-      title: 'New Post',
-      input: 'textarea',
-      inputPlaceholder: 'What\'s happening?',
-      showCancelButton: true,
-      confirmButtonText: 'Post',
-      preConfirm: (content) => {
-        if (content === '') {
-          Swal.showValidationMessage('Please enter a tweet.');
-          return false;
-        }
-        return content;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.tweetContent = result.value;
+    const dialogRef = this.dialog.open(NewPostComponent, {
+      width: '500px',
+      data: { tweetContent: this.tweetContent }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tweetContent = result;
         this.createPublication();
       }
     });
@@ -89,10 +113,7 @@ export class HomeComponent implements OnInit {
       content: this.tweetContent,
       vote_count: 0,
       timestamp: new Date().toISOString(),
-      comments: [{
-        content: '',
-        publicationId: 0
-      }]
+      comments: []
     };
 
     this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
@@ -105,6 +126,46 @@ export class HomeComponent implements OnInit {
         console.error('Error creating publication:', error);
       }
     );
+  }
+
+  showCommentModal(publication: PublicationI): void {
+    const dialogRef = this.dialog.open(CommentComponent, {
+      width: '500px',
+      data: { 
+        currentPublication: publication, 
+        publicationUsername: this.publicationUsernames[publication.id] 
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentContent = result;
+        this.currentPublication = publication;
+        this.createComment();
+      }
+    });
+  }
+
+  createComment(): void {
+    if (this.currentPublication) {
+      const newComment: CommentsI = {
+        content: this.commentContent,
+        timestamp: new Date().toISOString(),
+        publicationId: this.currentPublication.id,
+        userId: this.helperService.getUserId()
+      };
+
+      this.commentsService.createComment(newComment, this.helperService.getUserId()).subscribe(
+        response => {
+          console.log('Comment created:', response);
+          this.commentContent = '';
+          this.loadPublications();
+        },
+        error => {
+          console.error('Error creating comment:', error);
+        }
+      );
+    }
   }
 
   getTimeSince(timestamp: string): string {
@@ -181,22 +242,14 @@ export class HomeComponent implements OnInit {
   }
 
   editPublication(publication: PublicationI): void {
-    Swal.fire({
-      title: 'Edit Post',
-      input: 'textarea',
-      inputValue: publication.content,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      preConfirm: (content) => {
-        if (content === '') {
-          Swal.showValidationMessage('Please enter a tweet.');
-          return false;
-        }
-        return content;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.updatePublication(publication.id, result.value);
+    const dialogRef = this.dialog.open(EditPostComponent, {
+      width: '500px',
+      data: { publication: publication }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updatePublication(publication.id, result);
       }
     });
   }
@@ -222,5 +275,17 @@ export class HomeComponent implements OnInit {
         );
       }
     );
+  }
+
+  viewPublication(publication: PublicationI, event: MouseEvent): void {
+    // Evitar abrir modal si se hace clic en un botón
+    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
+      return;
+    }
+    
+    this.dialog.open(ViewPostComponent, {
+      width: '500px',
+      data: { publication: publication, publicationUsernames: this.publicationUsernames }
+    });
   }
 }
