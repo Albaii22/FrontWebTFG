@@ -1,6 +1,4 @@
-<header>
-  <app-navbar></app-navbar>
-</header>
+<app-navbar></app-navbar>
 
 <div class="container">
   <aside>
@@ -11,8 +9,8 @@
           <li><button (click)="navigateToHome()">Home</button></li>
           <li><button (click)="navigateToFollowing()">A quién seguir</button></li>
           <li><button (click)="navigateToProfile()">Perfil</button></li>
-          <li><button (click)="showNewPostModal()">New Post</button></li>
       </ul>
+      <button (click)="showNewPostModal()" class="new-post">New Post</button>
   </aside>
 
   <main>
@@ -27,7 +25,7 @@
                   <div class="left-section">
                       <img src="../../assets/img/profile.png" alt="Perfil">
                       <div class="tweet-user-info">
-                          <h3>{{ publicationUsernames[publication.id] }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
+                          <h3>{{ publicationUsernames[publication.id] }}  <span class="time">- {{ getTimeSince(publication.timestamp) }}</span></h3>
                       </div>
                   </div>
                   <div class="dropdown">
@@ -48,6 +46,4 @@
   </main>
 </div>
 
-<footer>
-  <app-footer></app-footer>
-</footer>
+<app-footer></app-footer>

@@ -4,8 +4,7 @@
             <div class="col-12 col-md-6 col-xl-7">
                 <div class="d-flex justify-content-center text-bg-custom">
                     <div class="col-12 col-xl-9 text-center">
-                        <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/img/icon.png" width="445" height="100" alt="BootstrapBrain Logo">
-                        <hr class="border-custom-subtle mb-4">
+                        <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/img/icon.png" width="445" height="100" alt="App Icon">
                     </div>
                 </div>
             </div>
@@ -13,31 +12,24 @@
                 <div class="card border-0 rounded-4">
                     <div class="card-body p-3 p-md-4 p-xl-5">
                         <h1>Register</h1>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="mb-4">
-                                    <h3 class="text-custom">Sign in</h3>
-                                    <p>Go back to Login <a class="link-custom" (click)="goToLogin()">| Log in</a></p>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="text-continued">Welcome to Flow Verse<br>Your space to speak freely!</p>
                         <form>
                             <div class="row gy-3 overflow-hidden">
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="text" [(ngModel)]="RegisterForm.username" class="form-control" name="username" id="username" placeholder="Username">
+                                        <input type="text" [(ngModel)]="RegisterForm.username" class="form-control" name="username" id="username" placeholder="Username" pattern="[A-Za-z0-9_]{5,15}" required>
                                         <label for="username" class="form-label">Username</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="email" [(ngModel)]="RegisterForm.email" class="form-control" name="email" id="email" placeholder="name@example.com">
+                                        <input type="email" [(ngModel)]="RegisterForm.email" class="form-control" name="email" id="email" placeholder="name@example.com" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$" required>
                                         <label for="email" class="form-label">Email</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="password" [(ngModel)]="RegisterForm.password" class="form-control" name="password" id="password" placeholder="Password">
+                                        <input type="password" [(ngModel)]="RegisterForm.password" class="form-control" name="password" id="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
                                         <label for="password" class="form-label">Password</label>
                                     </div>
                                 </div>
@@ -45,6 +37,11 @@
                                     <div class="d-grid">
                                         <button class="btn btn-custom btn-lg" (click)="Register(RegisterForm)">Register now</button>
                                     </div>
+                                </div>
+                                <div class="col-12">
+                                    <p class="mb-0 text-center">
+                                        Do you have an account? <a class="link-custom" (click)="goToLogin()">Log in</a>
+                                    </p>
                                 </div>
                             </div>
                         </form>
