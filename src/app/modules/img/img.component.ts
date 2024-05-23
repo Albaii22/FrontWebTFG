@@ -40,7 +40,7 @@ export class ImgComponent implements OnInit {
     this.userService.getUserById(id).subscribe(user => {
       this.user = user;
       if (user.profileImageUrl) {
-        this.profileImageUrl = this.sanitizeImageUrl(`${user.profileImageUrl}`);
+        this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
       }
     });
   }
@@ -66,10 +66,8 @@ export class ImgComponent implements OnInit {
   }
   
   sanitizeImageUrl(url: string): SafeUrl {
-    const fullUrl = `http://localhost:8082/${url}`;
+    const fullUrl = `http://localhost:8082/${decodeURIComponent(url)}`;
     console.log('Sanitized Image URL:', fullUrl);
     return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
   }
-  
-  
 }

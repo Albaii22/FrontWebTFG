@@ -37,6 +37,9 @@ export class HomeComponent implements OnInit {
      
     );
     this.loadPublications();
+  this.userService.getAllUsers().subscribe(
+    data => console.log(data)
+  )
   }
 
   loadPublications(): void {
