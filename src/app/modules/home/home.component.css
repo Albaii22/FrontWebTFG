@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #E4E2DD;
+    background-color: #333;
 }
 
 body {
@@ -31,7 +31,7 @@ aside {
 }
 
 .profile-card {
-    background-color: #333;
+    background-color: #A3B1BF;
     color: #fff ;
     padding: 5px;
     text-align: center;
@@ -57,41 +57,44 @@ aside {
 }
 
 .sidebar-links li button {
+    font-weight: bold;
     display: block;
-    border-color: transparent;
+    border: 2px solid #E4E2DD;
     width: 100%;
     padding: 10px;
-    background-color: #333;
+    background-color: #79e6ff;
     margin-bottom: 10px;
     text-decoration: none;
-    color: #1da1f2;
+    color: #2b2b2b;
     border-radius: 50px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-links li button:hover {
+    font-weight: bold;
     display: block;
-    border-color: transparent;
+    border: 2px solid #E4E2DD;
     width: 100%;
     padding: 10px;
-    background-color: rgb(75, 131, 233);
+    background-color: #3cd9fc;
     margin-bottom: 10px;
     text-decoration: none;
-    color: white;
+    color: #2b2b2b;
     border-radius: 50px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .new-post {
+    font-weight: bold;
     display: block;
-    border-color: transparent;
+    border: 2px solid #E4E2DD;
     width: 100%;
     padding: 10px;
-    background-color: #ff9bb5;
+    background-color: #FF89A9;
     text-decoration: none;
-    color: white;
+    color: #2b2b2b;
     border-radius: 50px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -99,7 +102,8 @@ aside {
 }
 
 .new-post:hover {
-    background-color: #e58a99;
+    border: 2px solid #E4E2DD;
+    background-color: #ff9bb5;
 }
 
 main {
@@ -117,7 +121,7 @@ main {
 }
 
 .new-tweet {
-    background-color: #333;
+    background-color: #3d3d3d;
     padding: 20px;
     margin-top: 10px;
     margin-bottom: 20px;
@@ -147,9 +151,10 @@ main {
 }
 
 .new-tweet button {
+    border: 2px solid #E4E2DD;
     background-color: #79e6ff;
-    color: #fff;
-    border: none;
+    color: #2b2b2b;
+    font-weight: bold;
     padding: 10px 20px;
     border-radius: 25px;
     cursor: pointer;
@@ -158,11 +163,12 @@ main {
 }
 
 .new-tweet button:hover {
-    background-color: #0d95e8;
+    border: 2px solid #E4E2DD;
+    background-color: #53ddfc;
 }
 
 .tweet {
-    background-color: #333;
+    background-color: #3d3d3d;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 10px;
@@ -191,7 +197,7 @@ main {
 .tweet-header span {
     font-size: 15px;
     margin-right: 10px;
-    color: #ff9bb5;
+    color: #959ba1;
 }
 
 .tweet-header img {
@@ -218,7 +224,7 @@ main {
     margin-top: 10px;
 }
 
-.tweet-actions button {
+.comment-btn{
     background-color: #79e6ff;
     color: #fff;
     border: none;
@@ -232,12 +238,30 @@ main {
     transition: background-color 0.2s;
 }
 
-.tweet-actions button:hover {
-    background-color: #0d95e8;
+.comment-btn:hover {
+    background-color: #5bd7f3;
+}
+
+.like-btn{
+    background-color: #79e6ff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.like-btn:hover {
+    background-color: #54dbfa;
 }
 
 .tweet-user-info {
-    color: #ff9bb5;
+    color: #bcc9d6;
 }
 
 .dropdown {
@@ -253,13 +277,13 @@ main {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    color: #ff9bb5;
+    color: #A3B1BF;
 }
 
 .dropdown-menu {
     display: none;
     position: absolute;
-    background-color: #79e6ff;
+    background-color: #A3B1BF;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     padding: 12px 16px;
     z-index: 1;
@@ -283,7 +307,6 @@ main {
     display: block;
 }
 
-/* Estilos personalizados para el scrollbar */
 .scrollable-content {
     overflow-y: auto;
 }
@@ -301,6 +324,10 @@ main {
     border-radius: 10px;
     border: 3px solid #f1f1f1;
 }
+
+.like-btn.liked i {
+    color: #fa7fa0;
+  }
 
 @media (max-width: 768px) {
     .container {

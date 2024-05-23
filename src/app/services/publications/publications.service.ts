@@ -40,4 +40,9 @@ export class PublicationsService {
     const url = `${this.urlPublications}/${publicationId}/username`;
     return this.http.get<string>(url);
   }
+
+  toggleLike(publicationId: number, userId: number): Observable<void> {
+    return this.http.post<void>(`${this.urlPublications}/${publicationId}/toggle-like`, { userId });
+  }
+  
 }

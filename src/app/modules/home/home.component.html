@@ -7,8 +7,8 @@
     </div>
     <ul class="sidebar-links">
       <li><button (click)="navigateToHome()">Home</button></li>
-      <li><button (click)="navigateToFollowing()">A quién seguir</button></li>
-      <li><button (click)="navigateToProfile()">Perfil</button></li>
+      <li><button (click)="navigateToFollowing()">Verse Users</button></li>
+      <li><button (click)="navigateToProfile()">Profile</button></li>
     </ul>
     <button (click)="showNewPostModal()" class="new-post">New Post</button>
   </aside>
@@ -17,7 +17,7 @@
     <div class="scrollable-content">
       <div class="new-tweet">
         <textarea [(ngModel)]="tweetContent" placeholder="What's happening?"></textarea>
-        <button (click)="createPublication()">Publicar</button>
+        <button (click)="createPublication()">Post</button>
       </div>
       <div *ngFor="let publication of publications" class="tweet">
         <div class="tweet-header">
@@ -40,10 +40,11 @@
         <p class="tweet-content" (click)="viewPublication(publication, $event)">{{ publication.content }}</p>
         <div class="tweet-actions">
           <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"><span></span><span *ngIf="publication.comments.length > 0">  {{ publication.comments.length }}</span></i></button>
-          <button class="like-btn"><i class="fas fa-heart"></i> Like</button>
+          <button class="like-btn" [ngClass]="{'liked': publication.liked_by_user}" (click)="toggleLike(publication)">
+            <i class="fas fa-heart"></i>{{ publication.vote_count }}
+          </button>
         </div>
       </div>
-      
     </div>
   </main>
 </div>

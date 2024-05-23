@@ -12,8 +12,8 @@ import { CommentComponent } from '../modales/comment/comment.component';
 import { ViewPostComponent } from '../modales/view-post/view-post.component';
 import { EditPostComponent } from '../modales/edit-post/edit-post.component';
 import Swal from 'sweetalert2';
-import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -62,9 +62,9 @@ export class HomeComponent implements OnInit {
       data => {
         this.helperService.setUserId(data);
         this.currentUserId = data;
+        this.loadPublications(); 
       }
     );
-    this.loadPublications();
     this.userService.getAllUsers().subscribe(
       data => console.log(data)
     );
@@ -77,8 +77,11 @@ export class HomeComponent implements OnInit {
   loadPublications(): void {
     this.publicationsService.getAllPublications().subscribe(
       data => {
-        console.log(data);
-        this.publications = data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        this.publications = data.map(publication => ({
+          ...publication,
+          liked_by_user: publication.likedBy.includes(this.currentUserId)
+        }));
+        this.publications = this.publications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         this.loadUsernames();
       }
     );
@@ -107,15 +110,26 @@ export class HomeComponent implements OnInit {
   }
 
   createPublication(): void {
+    if (!this.tweetContent.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Write something plss!'
+      });
+      return;
+    }
+  
     const newPublication: PublicationI = {
       id: 0,
       user_id: this.helperService.getUserId(),
       content: this.tweetContent,
       vote_count: 0,
       timestamp: new Date().toISOString(),
-      comments: []
+      comments: [],
+      liked_by_user: false,
+      likedBy: []
     };
-
+  
     this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
       response => {
         console.log('Publication created:', response);
@@ -278,7 +292,6 @@ export class HomeComponent implements OnInit {
   }
 
   viewPublication(publication: PublicationI, event: MouseEvent): void {
-    // Evitar abrir modal si se hace clic en un botón
     if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
       return;
     }
@@ -287,5 +300,18 @@ export class HomeComponent implements OnInit {
       width: '500px',
       data: { publication: publication, publicationUsernames: this.publicationUsernames }
     });
+  }
+
+  toggleLike(publication: PublicationI): void {
+    this.publicationsService.toggleLike(publication.id, this.currentUserId).subscribe(
+      () => {
+        console.log('Publication liked:', publication);
+        publication.liked_by_user = !publication.liked_by_user;
+        publication.vote_count += publication.liked_by_user ? 1 : -1;
+      },
+      error => {
+        console.error('Error toggling like:', error);
+      }
+    );
   }
 }

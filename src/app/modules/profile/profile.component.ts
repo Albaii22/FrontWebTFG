@@ -7,14 +7,29 @@ import { FooterComponent } from '../footer/footer.component';
 import { PublicationI } from '../../interfaces/publications.interface';
 import { PublicationsService } from '../../services/publications/publications.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { userI } from '../../interfaces/user.interface';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { CommentComponent } from '../modales/comment/comment.component';
+import { NewPostComponent } from '../modales/new-post/new-post.component';
+import { EditPostComponent } from '../modales/edit-post/edit-post.component';
+import { EditProfileComponent } from '../modales/edit-profile/edit-profile.component';
+import { CommentsI } from '../../interfaces/comments.interface';
+import { CommentsService } from '../../services/comments/comments.service';
 import { userUpdateI } from '../../interfaces/userUpdate.interface';
+import { ViewPostComponent } from '../modales/view-post/view-post.component';
+import { TokenService } from '../../services/token/token.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NavbarComponent, FooterComponent, CommonModule, FormsModule],
+  imports: [
+    NavbarComponent,
+    FooterComponent,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule
+  ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -24,12 +39,19 @@ export class ProfileComponent implements OnInit {
   userPublications: PublicationI[] = [];
   registrationDate: Date = new Date();
   profileImageUrl: string = '../../assets/img/profile.png';
-  aboutMe: String = '';
+  aboutMe: string = '';
+  commentContent: string = '';
+  currentPublication: PublicationI | null = null;
+  currentUserId: number = 0;
+  userId = this.helperService.getUserId();
 
   constructor(
     private userService: UserService,
     private helperService: HelpersService,
-    private publicationsService: PublicationsService
+    private publicationsService: PublicationsService,
+    private dialog: MatDialog,
+    private commentsService: CommentsService,
+    private tokenService: TokenService
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +61,7 @@ export class ProfileComponent implements OnInit {
         if (user.profileImageUrl) {
           this.profileImageUrl = user.profileImageUrl;
         }
+        this.currentUserId = user;
         this.loadUserPublications();
       },
       error => {
@@ -49,54 +72,52 @@ export class ProfileComponent implements OnInit {
     this.userService.getUserById(this.helperService.getUserId()).subscribe(
       user => {
         this.registrationDate = new Date(user.registration_date);
-        console.log(user);
         this.aboutMe = user.aboutMe;
       },
       error => {
         console.error('Error fetching user data:', error);
       }
     );
+
+    console.log(this.helperService.getUserId());
   }
 
   showNewPostModal(): void {
-    Swal.fire({
-      title: 'New Post',
-      input: 'textarea',
-      inputPlaceholder: 'What\'s happening?',
-      showCancelButton: true,
-      confirmButtonText: 'Post',
-      preConfirm: (content) => {
-        if (content === '') {
-          Swal.showValidationMessage('Please enter a tweet.');
-          return false;
-        }
-        return content;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.tweetContent = result.value;
-        const newPublication: PublicationI = {
-          id: 0,
-          user_id: this.helperService.getUserId(),
-          content: this.tweetContent,
-          vote_count: 0,
-          timestamp: new Date().toISOString(),
-          comments: [
-          ]
-        };
+    const dialogRef = this.dialog.open(NewPostComponent, {
+      width: '500px',
+      data: { tweetContent: this.tweetContent }
+    });
 
-        this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
-          response => {
-            console.log('Publication created:', response);
-            this.tweetContent = '';
-            this.loadUserPublications();
-          },
-          error => {
-            console.error('Error creating publication:', error);
-          }
-        );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tweetContent = result;
+        this.createPublication();
       }
     });
+  }
+
+  createPublication(): void {
+    const newPublication: PublicationI = {
+      id: 0,
+      user_id: this.helperService.getUserId(),
+      content: this.tweetContent,
+      vote_count: 0,
+      timestamp: new Date().toISOString(),
+      comments: [],
+      liked_by_user: false,
+      likedBy: []
+    };
+
+    this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
+      response => {
+        console.log('Publication created:', response);
+        this.tweetContent = '';
+        this.loadUserPublications();
+      },
+      error => {
+        console.error('Error creating publication:', error);
+      }
+    );
   }
 
   loadUserPublications(): void {
@@ -104,7 +125,10 @@ export class ProfileComponent implements OnInit {
     if (userId) {
       this.publicationsService.getPublicationsByUserId(userId).subscribe(
         publications => {
-          this.userPublications = publications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          this.userPublications = publications.map(publication => ({
+            ...publication,
+            liked_by_user: publication.likedBy.includes(this.currentUserId)
+          })).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         },
         error => {
           console.error('Error fetching user publications:', error);
@@ -189,22 +213,14 @@ export class ProfileComponent implements OnInit {
   }
 
   editPublication(publication: PublicationI): void {
-    Swal.fire({
-      title: 'Edit Post',
-      input: 'textarea',
-      inputValue: publication.content,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      preConfirm: (content) => {
-        if (content === '') {
-          Swal.showValidationMessage('Please enter a tweet.');
-          return false;
-        }
-        return content;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.updatePublication(publication.id, result.value);
+    const dialogRef = this.dialog.open(EditPostComponent, {
+      width: '500px',
+      data: { publication: publication }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updatePublication(publication.id, result);
       }
     });
   }
@@ -233,26 +249,18 @@ export class ProfileComponent implements OnInit {
   }
 
   editProfile(): void {
-    Swal.fire({
-      title: 'Edit Profile',
-      html: `
-        <input id="swal-input1" class="swal2-input" placeholder="Username" value="${this.username}">
-        <textarea id="swal-input2" class="swal2-input" placeholder="About Me">${this.aboutMe}</textarea>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      preConfirm: () => {
-        const username = (document.getElementById('swal-input1') as HTMLInputElement).value;
-        const aboutMe = (document.getElementById('swal-input2') as HTMLTextAreaElement).value;
-        if (!username || !aboutMe) {
-          Swal.showValidationMessage('Both fields are required');
-          return false;
-        }
-        return { username, aboutMe };
+    const dialogRef = this.dialog.open(EditProfileComponent, {
+      width: '500px',
+      data: { 
+        username: this.username, 
+        aboutMe: this.aboutMe, 
+        profileImageUrl: this.profileImageUrl 
       }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        const { username, aboutMe } = result.value;
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const { username, aboutMe } = result;
         const updatedUser: userUpdateI = {
           username,
           aboutMe,
@@ -263,11 +271,13 @@ export class ProfileComponent implements OnInit {
           () => {
             Swal.fire(
               'Updated!',
-              'Your profile has been updated.',
+              'Your profile has been updated. Log In again.',
               'success'
             );
             this.username = username;
             this.aboutMe = aboutMe;
+            this.helperService.navigateTo('/login');+
+            this.tokenService.removeToken();
           },
           error => {
             console.error('Error updating profile:', error);
@@ -279,6 +289,69 @@ export class ProfileComponent implements OnInit {
           }
         );
       }
+    });
+  }
+
+  showCommentModal(publication: PublicationI): void {
+    const dialogRef = this.dialog.open(CommentComponent, {
+      width: '500px',
+      data: { 
+        currentPublication: publication, 
+        publicationUsername: this.username
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentContent = result;
+        this.currentPublication = publication;
+        this.createComment();
+      }
+    });
+  }
+
+  createComment(): void {
+    if (this.currentPublication) {
+      const newComment: CommentsI = {
+        content: this.commentContent,
+        timestamp: new Date().toISOString(),
+        publicationId: this.currentPublication.id,
+        userId: this.helperService.getUserId()
+      };
+
+      this.commentsService.createComment(newComment, this.helperService.getUserId()).subscribe(
+        response => {
+          console.log('Comment created:', response);
+          this.commentContent = '';
+          this.loadUserPublications();
+        },
+        error => {
+          console.error('Error creating comment:', error);
+        }
+      );
+    }
+  }
+
+  toggleLike(publication: PublicationI): void {
+    this.publicationsService.toggleLike(publication.id, this.currentUserId).subscribe(
+      () => {
+        publication.liked_by_user = !publication.liked_by_user;
+        publication.vote_count += publication.liked_by_user ? 1 : -1;
+      },
+      error => {
+        console.error('Error toggling like:', error);
+      }
+    );
+  }
+
+  viewPublication(publication: PublicationI, event: MouseEvent): void {
+    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
+      return;
+    }
+
+    this.dialog.open(ViewPostComponent, {
+      width: '500px',
+      data: { publication: publication, publicationUsernames: { [publication.id]: this.username } }
     });
   }
 }

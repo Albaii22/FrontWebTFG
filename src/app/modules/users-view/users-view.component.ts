@@ -5,16 +5,33 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from '../footer/footer.component';
-import Swal from 'sweetalert2';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PublicationI } from '../../interfaces/publications.interface';
 import { PublicationsService } from '../../services/publications/publications.service';
 import { UserService } from '../../services/user/user.service';
 import { userI } from '../../interfaces/user.interface';
+import { NewPostComponent } from '../modales/new-post/new-post.component';
+import { EditPostComponent } from '../modales/edit-post/edit-post.component';
+import { CommentComponent } from '../modales/comment/comment.component';
+import { ViewPostComponent } from '../modales/view-post/view-post.component';
+import Swal from 'sweetalert2';
+import { CommentsService } from '../../services/comments/comments.service';
+import { CommentsI } from '../../interfaces/comments.interface';
 
 @Component({
   selector: 'app-users-view',
   standalone: true,
-  imports: [NavbarComponent, CommonModule, FormsModule, FooterComponent],
+  imports: [
+    NavbarComponent,
+    CommonModule,
+    FormsModule,
+    FooterComponent,
+    MatDialogModule,
+    NewPostComponent,
+    CommentComponent,
+    ViewPostComponent,
+    EditPostComponent
+  ],
   templateUrl: './users-view.component.html',
   styleUrls: ['./users-view.component.css']
 })
@@ -24,16 +41,31 @@ export class UsersViewComponent implements OnInit {
   users: userI[] = [];
   selectedUser: userI | null = null;
   selectedUserPublications: PublicationI[] = [];
+  currentUserId: number = 0;
+  commentContent: string = '';
+  currentPublication: PublicationI | null = null;
+  isCurrentUserProfile: boolean = false;
 
   constructor(
     private router: Router,
     private helperService: HelpersService,
     private publicationsService: PublicationsService,
-    private userService: UserService
+    private userService: UserService,
+    private commentsService: CommentsService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.loadUsers();
+    this.userService.getUsuarioIdByUsername(this.username).subscribe(
+      data => {
+        this.currentUserId = data;
+        console.log(this.currentUserId);
+      },
+      error => {
+        console.error('Error fetching user id:', error);
+      }
+    );
   }
 
   loadUsers(): void {
@@ -60,53 +92,58 @@ export class UsersViewComponent implements OnInit {
   }
 
   showNewPostModal(): void {
-    Swal.fire({
-      title: 'New Post',
-      input: 'textarea',
-      inputPlaceholder: 'What\'s happening?',
-      showCancelButton: true,
-      confirmButtonText: 'Post',
-      preConfirm: (content) => {
-        if (content === '') {
-          Swal.showValidationMessage('Please enter a tweet.');
-          return false;
-        }
-        return content;
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        this.tweetContent = result.value;
-        const newPublication: PublicationI = {
-          id: 0,
-          user_id: this.helperService.getUserId(),
-          content: this.tweetContent,
-          vote_count: 0,
-          timestamp: new Date().toISOString(),
-          comments: []
-        };
+    const dialogRef = this.dialog.open(NewPostComponent, {
+      width: '500px',
+      data: { tweetContent: this.tweetContent }
+    });
 
-        this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
-          response => {
-            console.log('Publication created:', response);
-            this.tweetContent = '';
-          },
-          error => {
-            console.error('Error creating publication:', error);
-          }
-        );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tweetContent = result;
+        this.createPublication();
       }
     });
   }
 
+  createPublication(): void {
+    const newPublication: PublicationI = {
+      id: 0,
+      user_id: this.helperService.getUserId(),
+      content: this.tweetContent,
+      vote_count: 0,
+      timestamp: new Date().toISOString(),
+      comments: [],
+      liked_by_user: false,
+      likedBy: []
+    };
+
+    this.publicationsService.createPublication(newPublication, this.helperService.getUserId()).subscribe(
+      response => {
+        console.log('Publication created:', response);
+        this.tweetContent = '';
+        if (this.selectedUser && this.selectedUser.id === this.currentUserId) {
+          this.loadUserPublications(this.currentUserId);
+        }
+      },
+      error => {
+        console.error('Error creating publication:', error);
+      }
+    );
+  }
+
   viewUserProfile(user: userI): void {
     this.selectedUser = user;
+    this.isCurrentUserProfile = (user.id === this.currentUserId);
     this.loadUserPublications(user.id);
   }
 
   loadUserPublications(userId: number): void {
     this.publicationsService.getPublicationsByUserId(userId).subscribe(
       publications => {
-        this.selectedUserPublications = publications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        this.selectedUserPublications = publications.map(publication => ({
+          ...publication,
+          liked_by_user: publication.likedBy.includes(this.currentUserId)
+        })).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       },
       error => {
         console.error('Error fetching user publications:', error);
@@ -140,5 +177,141 @@ export class UsersViewComponent implements OnInit {
     if (interval > 1) return Math.floor(interval) + ' minutos';
 
     return Math.floor(seconds) + ' segundos';
+  }
+
+  editPublication(publication: PublicationI): void {
+    const dialogRef = this.dialog.open(EditPostComponent, {
+      width: '500px',
+      data: { publication: publication }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updatePublication(publication.id, result);
+      }
+    });
+  }
+
+  updatePublication(publicationId: number, newContent: string): void {
+    const updatedPublication: PublicationI = { ...this.selectedUserPublications.find(pub => pub.id === publicationId), content: newContent } as PublicationI;
+
+    this.publicationsService.updatePublication(publicationId, updatedPublication).subscribe(
+      () => {
+        Swal.fire(
+          'Updated!',
+          'Your publication has been updated.',
+          'success'
+        );
+        this.loadUserPublications(this.selectedUser?.id || this.currentUserId);
+      },
+      error => {
+        console.error('Error updating publication:', error);
+        Swal.fire(
+          'Error!',
+          'There was an error updating your publication.',
+          'error'
+        );
+      }
+    );
+  }
+
+  confirmDeletePublication(publicationId: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deletePublication(publicationId);
+      }
+    });
+  }
+
+  deletePublication(publicationId: number): void {
+    this.publicationsService.deletePublication(publicationId).subscribe(
+      () => {
+        Swal.fire(
+          'Deleted!',
+          'Your publication has been deleted.',
+          'success'
+        );
+        this.loadUserPublications(this.selectedUser?.id || this.currentUserId);
+      },
+      error => {
+        console.error('Error deleting publication:', error);
+        Swal.fire(
+          'Error!',
+          'There was an error deleting your publication.',
+          'error'
+        );
+      }
+    );
+  }
+
+  showCommentModal(publication: PublicationI): void {
+    const dialogRef = this.dialog.open(CommentComponent, {
+      width: '500px',
+      data: { 
+        currentPublication: publication, 
+        publicationUsername: this.selectedUser?.username 
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.commentContent = result;
+        this.currentPublication = publication;
+        this.createComment();
+      }
+    });
+  }
+
+  createComment(): void {
+    if (this.currentPublication) {
+      const newComment: CommentsI = {
+        content: this.commentContent,
+        timestamp: new Date().toISOString(),
+        publicationId: this.currentPublication.id,
+        userId: this.helperService.getUserId()
+      };
+
+      this.commentsService.createComment(newComment, this.helperService.getUserId()).subscribe(
+        response => {
+          console.log('Comment created:', response);
+          this.commentContent = '';
+          this.loadUserPublications(this.selectedUser?.id || this.currentUserId);
+        },
+        error => {
+          console.error('Error creating comment:', error);
+        }
+      );
+    }
+  }
+
+  toggleLike(publication: PublicationI): void {
+    this.publicationsService.toggleLike(publication.id, this.currentUserId).subscribe(
+      () => {
+        publication.liked_by_user = !publication.liked_by_user;
+        publication.vote_count += publication.liked_by_user ? 1 : -1;
+      },
+      error => {
+        console.error('Error toggling like:', error);
+      }
+    );
+  }
+
+  viewPublication(publication: PublicationI, event: MouseEvent): void {
+    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
+      return;
+    }
+    
+    this.dialog.open(ViewPostComponent, {
+      width: '500px',
+      data: { publication: publication, publicationUsernames: { [publication.id]: this.selectedUser?.username } }
+    });
   }
 }

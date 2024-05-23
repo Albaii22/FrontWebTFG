@@ -1,58 +1,73 @@
 <header>
-    <app-navbar></app-navbar>
-  </header>
-  
-  <div class="container">
-    <aside>
-      <div class="profile-card">
-        <h2>{{ username }}</h2>
+  <app-navbar></app-navbar>
+</header>
+
+<div class="container">
+  <aside>
+    <div class="profile-card">
+      <h2>{{ username }}</h2>
+    </div>
+    <ul class="sidebar-links">
+      <li><button (click)="navigateToHome()">Home</button></li>
+      <li><button (click)="navigateToFollowing()">Verse Users</button></li>
+      <li><button (click)="navigateToProfile()">Profile</button></li>
+    </ul>
+     <button (click)="showNewPostModal()" class="new-post">New Post</button>
+  </aside>
+
+  <main>
+    <div *ngIf="selectedUser" class="profile-detail">
+      <div class="back-button" (click)="closeUserProfile()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to all users</span>
       </div>
-      <ul class="sidebar-links">
-        <li><button (click)="navigateToHome()">Home</button></li>
-        <li><button (click)="navigateToFollowing()">A quién seguir</button></li>
-        <li><button (click)="navigateToProfile()">Perfil</button></li>
-        <li><button (click)="showNewPostModal()">New Post</button></li>
-      </ul>
-    </aside>
-  
-    <main>
-      <div *ngIf="selectedUser" class="profile-detail">
-        <div class="profile-header">
-          <img [src]="selectedUser.profileImageUrl" alt="Profile Image">
-          <div class="profile-info">
-            <h2>{{ selectedUser.username }}</h2>
-            <p class="about-me">{{ selectedUser.aboutMe }}</p>
-            <p class="registration-date">Registered on {{ selectedUser.registration_date | date }}</p>
-            <button (click)="closeUserProfile()">Close</button>
-          </div>
+      <div class="profile-header">
+        <img [src]="selectedUser.profileImageUrl" alt="Profile Image">
+        <div class="profile-info">
+          <h2>{{ selectedUser.username }}</h2>
+          <p class="about-me">{{ selectedUser.aboutMe }}</p>
+          <p class="registration-date">Registered on {{ selectedUser.registration_date | date }}</p>
         </div>
-  
-        <div class="scrollable-content">
-          <div *ngFor="let publication of selectedUserPublications" class="tweet">
-            <div class="tweet-header">
-              <div class="left-section">
-                <img [src]="selectedUser.profileImageUrl" alt="Perfil">
-                <div class="tweet-user-info">
-                  <h3>{{ selectedUser.username }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
-                </div>
+      </div>
+
+      <div class="scrollable-content publications-container">
+        <div *ngFor="let publication of selectedUserPublications" class="tweet" (click)="viewPublication(publication, $event)">
+          <div class="tweet-header">
+            <div class="left-section">
+              <img [src]="selectedUser.profileImageUrl" alt="Perfil">
+              <div class="tweet-user-info">
+                <h3>{{ selectedUser.username }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
               </div>
             </div>
-            <p class="tweet-content">{{ publication.content }}</p>
+            <div *ngIf="isCurrentUserProfile" class="dropdown">
+              <button class="dropdown-toggle">•••</button>
+              <div class="dropdown-menu">
+                <button (click)="editPublication(publication)">Edit Publication</button>
+                <button (click)="confirmDeletePublication(publication.id)">Delete Publication</button>
+              </div>
+            </div>
+          </div>
+          <p class="tweet-content">{{ publication.content }}</p>
+          <div class="tweet-actions">
+            <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"></i> <span *ngIf="publication.comments.length > 0"> {{ publication.comments.length }}</span></button>
+            <button class="like-btn" [ngClass]="{'liked': publication.liked_by_user}" (click)="toggleLike(publication)">
+              <i class="fas fa-heart"></i>{{ publication.vote_count }}
+            </button>
           </div>
         </div>
       </div>
-  
-      <div *ngIf="!selectedUser" class="user-cards">
-        <div *ngFor="let user of users" class="user-card" (click)="viewUserProfile(user)">
-          <img [src]="user.profileImageUrl" alt="User Image">
-          <h3>{{ user.username }}</h3>
-          <p>{{ user.aboutMe | slice:0:50 }}...</p>
-        </div>
+    </div>
+
+    <div *ngIf="!selectedUser" class="scrollable-content user-cards">
+      <div *ngFor="let user of users" class="user-card" (click)="viewUserProfile(user)">
+        <img [src]="user.profileImageUrl" alt="User Image">
+        <h3>{{ user.username }}</h3>
+        <p>{{ user.aboutMe | slice:0:50 }}...</p>
       </div>
-    </main>
-  </div>
-  
-  <footer>
-    <app-footer></app-footer>
-  </footer>
-  
+    </div>
+  </main>
+</div>
+
+<footer>
+  <app-footer></app-footer>
+</footer>

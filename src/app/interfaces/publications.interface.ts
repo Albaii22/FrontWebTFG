@@ -7,5 +7,7 @@ export interface PublicationI {
     vote_count: number;
     timestamp: string;
     comments: CommentsI[];
+    liked_by_user: boolean;
+    likedBy: number[];
   }
   
