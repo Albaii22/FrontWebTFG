@@ -1,27 +1,49 @@
-# FrontEndWebTFG
+This Angular Social Media App is a project aimed at building a social media platform where users can register, login, create publications, comment on publications, like publications, and view other users' profiles.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.3.
+Project Structure
+The project follows a typical Angular application structure with components, services, guards, interfaces, and routes organized into different modules.
 
-## Development server
+Components
+LoginComponent: Responsible for user login functionality.
+RegisterComponent: Handles user registration.
+HomeComponent: Displays the home page with user publications.
+ProfileComponent: Shows the user's profile page.
+UsersViewComponent: Displays a view for all users.
+NewPostComponent: Provides a modal for creating a new publication.
+EditPostComponent: Allows users to edit their publications.
+CommentComponent: Modal for commenting on publications.
+AboutmeComponent: Modal for updating user profile information.
+Services
+AuthService: Manages authentication-related functionalities like login and registration.
+TokenService: Handles token management, including setting, getting, and removing tokens.
+UserService: Handles user-related functionalities like fetching user data, updating profiles, and retrieving user information from tokens.
+PublicationsService: Responsible for CRUD operations related to user publications, including creating, updating, deleting, and fetching publications.
+CommentsService: Handles CRUD operations related to comments on publications.
+Guards
+AuthGuard: Ensures that only authenticated users can access certain routes like home, profile, and user view.
+Interceptors
+interceptorJwtInterceptor: Intercepts HTTP requests to add JWT tokens to the authorization headers for authenticated users.
+Key Features
+Authentication: Users can register and log in securely using JWT tokens.
+User Profile Management: Users can update their profiles, including profile pictures and about me sections.
+Publication Management: Users can create, edit, and delete their publications.
+Comments and Likes: Users can comment on and like publications.
+User Interaction: Users can view other users' profiles, follow/unfollow users, and interact with their publications.
+Installation and Usage
+To run the application:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Clone the repository.
+Navigate to the project directory.
+Install dependencies using npm install.
+Run the Angular application using ng serve.
+Ensure that the backend API server is running and accessible at http://localhost:8082, as the frontend makes HTTP requests to this endpoint.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Further Improvements
+Security Enhancements: Implement additional security measures like input validation, CSRF protection, and secure storage of tokens.
+Error Handling: Improve error handling by providing user-friendly error messages and logging errors more comprehensively.
+Performance Optimization: Optimize the application for better performance, especially in fetching and displaying large datasets.
+UI/UX Enhancements: Improve the user interface and experience to make the application more intuitive and visually appealing.
+Testing: Write comprehensive unit and integration tests to ensure the reliability and stability of the application.
+Documentation: Enhance code documentation to improve readability and maintainability, including inline comments, JSDoc comments, and a detailed README.
+Conclusion
+The Angular Social Media App is a comprehensive project that demonstrates various aspects of building a modern web application using Angular. With its features and functionalities, it provides a solid foundation for further development and customization to meet specific requirements.
