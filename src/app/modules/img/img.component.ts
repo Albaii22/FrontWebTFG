@@ -34,6 +34,7 @@ export class ImgComponent implements OnInit {
         }
       });
     }
+
   }
 
   loadUserDetails(id: number): void {
@@ -41,6 +42,7 @@ export class ImgComponent implements OnInit {
       this.user = user;
       if (user.profileImageUrl) {
         this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
+        console.log('xssss:', user.profileImageUrl);
       }
     });
   }
@@ -69,5 +71,6 @@ export class ImgComponent implements OnInit {
     const fullUrl = `http://localhost:8082/${decodeURIComponent(url)}`;
     console.log('Sanitized Image URL:', fullUrl);
     return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
-  }
+}
+
 }
