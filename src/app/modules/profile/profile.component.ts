@@ -18,6 +18,7 @@ import { CommentsService } from '../../services/comments/comments.service';
 import { userUpdateI } from '../../interfaces/userUpdate.interface';
 import { ViewPostComponent } from '../modales/view-post/view-post.component';
 import { TokenService } from '../../services/token/token.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -38,7 +39,7 @@ export class ProfileComponent implements OnInit {
   tweetContent = '';
   userPublications: PublicationI[] = [];
   registrationDate: Date = new Date();
-  profileImageUrl: string = '../../assets/img/profile.png';
+  profileImageUrl: SafeUrl | string = '../../assets/img/profile.png';
   aboutMe: string = '';
   commentContent: string = '';
   currentPublication: PublicationI | null = null;
@@ -51,7 +52,8 @@ export class ProfileComponent implements OnInit {
     private publicationsService: PublicationsService,
     private dialog: MatDialog,
     private commentsService: CommentsService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +61,7 @@ export class ProfileComponent implements OnInit {
       user => {
         this.helperService.setUserId(user);
         if (user.profileImageUrl) {
-          this.profileImageUrl = user.profileImageUrl;
+          this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
         }
         this.currentUserId = user;
         this.loadUserPublications();
@@ -73,6 +75,9 @@ export class ProfileComponent implements OnInit {
       user => {
         this.registrationDate = new Date(user.registration_date);
         this.aboutMe = user.aboutMe;
+        if (user.profileImageUrl) {
+          this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
+        }
       },
       error => {
         console.error('Error fetching user data:', error);
@@ -80,6 +85,11 @@ export class ProfileComponent implements OnInit {
     );
 
     console.log(this.helperService.getUserId());
+  }
+
+  sanitizeImageUrl(url: string): SafeUrl {
+    const fullUrl = `http://localhost:8082/${decodeURIComponent(url)}`;
+    return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
   }
 
   showNewPostModal(): void {
@@ -257,15 +267,19 @@ export class ProfileComponent implements OnInit {
         profileImageUrl: this.profileImageUrl 
       }
     });
+     
+    
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const { username, aboutMe } = result;
+        const { username, aboutMe, profileImageUrl } = result;
         const updatedUser: userUpdateI = {
           username,
           aboutMe,
-          profileImageUrl: this.profileImageUrl
+          profileImageUrl: profileImageUrl
         };
+
+        console.log(updatedUser)
 
         this.userService.updateUsuario(this.helperService.getUserId(), updatedUser).subscribe(
           () => {
@@ -276,7 +290,8 @@ export class ProfileComponent implements OnInit {
             );
             this.username = username;
             this.aboutMe = aboutMe;
-            this.helperService.navigateTo('/login');+
+            this.profileImageUrl = this.sanitizeImageUrl(profileImageUrl); // update local profileImageUrl
+            this.helperService.navigateTo('/login');
             this.tokenService.removeToken();
           },
           error => {
