@@ -1,0 +1,52 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <aside>
+    <div class="profile-card">
+      <h2>{{ username }}</h2>
+    </div>
+    <ul class="sidebar-links">
+      <li><button (click)="navigateToHome()">Home</button></li>
+      <li><button (click)="navigateToFollowing()">Verse Users</button></li>
+      <li><button (click)="navigateToProfile()">Profile</button></li>
+    </ul>
+    <button (click)="showNewPostModal()" class="new-post">New Post</button>
+  </aside>
+
+  <main>
+    <div class="scrollable-content">
+      <div class="new-tweet">
+        <textarea [(ngModel)]="tweetContent" placeholder="What's happening?"></textarea>
+        <button (click)="createPublication()">Post</button>
+      </div>
+      <div *ngFor="let publication of publications" class="tweet">
+        <div class="tweet-header">
+          <div class="left-section">
+            <img [src]="publicationProfileImages[publication.id]" alt="Perfil" class="profile-image">
+            <div class="tweet-user-info">
+              <h3>{{ publicationUsernames[publication.id] }}  
+                <span class="time">- {{ getTimeSince(publication.timestamp) }}</span>
+              </h3>
+            </div>
+          </div>
+          <div class="dropdown" *ngIf="isPublicationOwner(publication.user_id)">
+            <button class="dropdown-toggle">•••</button>
+            <div class="dropdown-menu" >
+              <button (click)="editPublication(publication)">Edit Publication</button>
+              <button (click)="confirmDeletePublication(publication.id)">Delete Publication</button>
+            </div>
+          </div>
+        </div>
+        <p class="tweet-content" (click)="viewPublication(publication, $event)">{{ publication.content }}</p>
+        <div class="tweet-actions">
+          <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"><span></span><span *ngIf="publication.comments.length > 0">  {{ publication.comments.length }}</span></i></button>
+          <button class="like-btn" [ngClass]="{'liked': publication.liked_by_user}" (click)="toggleLike(publication)">
+            <i class="fas fa-heart"></i>{{ publication.vote_count }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<app-footer></app-footer>

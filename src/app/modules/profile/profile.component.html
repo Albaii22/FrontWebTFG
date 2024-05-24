@@ -1,0 +1,66 @@
+<header>
+  <app-navbar></app-navbar>
+</header>
+
+<div class="container">
+  <aside>
+    <div class="profile-card">
+      <h2>{{ username }}</h2>
+    </div>
+    <ul class="sidebar-links">
+      <li><button (click)="navigateToHome()">Home</button></li>
+      <li><button (click)="navigateToFollowing()">Verse Users</button></li>
+      <li><button (click)="navigateToProfile()">Profile</button></li>
+    </ul>
+    <button (click)="showNewPostModal()" class="new-post">New Post</button>
+  </aside>
+
+  <main>
+    <div class="profile-header">
+      <div class="profile-image-container">
+        <img [src]="profileImageUrl" alt="Profile Image" class="profile-image">
+        <div class="profile-image-hover" (click)="selectFileInput()">
+          Update Image
+        </div>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+      </div>
+      <div class="profile-info">
+        <h2>{{ username }}</h2>
+        <p class="about-me">{{ aboutMe }}</p>
+        <p class="registration-date">Registered on {{ registrationDate | date }}</p>
+        <button (click)="editProfile()">Editar Perfil</button>
+      </div>
+    </div>
+
+    <div class="scrollable-content">
+      <div *ngFor="let publication of userPublications" class="tweet" (click)="viewPublication(publication, $event)">
+        <div class="tweet-header">
+          <div class="left-section">
+            <img [src]="profileImageUrl" alt="Perfil" class="profile-image">
+            <div class="tweet-user-info">
+              <h3>{{ username }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropdown-toggle">•••</button>
+            <div class="dropdown-menu">
+              <button (click)="editPublication(publication)">Edit Publication</button>
+              <button (click)="confirmDeletePublication(publication.id)">Delete Publication</button>
+            </div>
+          </div>
+        </div>
+        <p class="tweet-content">{{ publication.content }}</p>
+        <div class="tweet-actions">
+          <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"></i> <span *ngIf="publication.comments.length > 0"> {{ publication.comments.length }}</span></button>
+          <button class="like-btn" [ngClass]="{'liked': publication.liked_by_user}" (click)="toggleLike(publication)">
+            <i class="fas fa-heart"></i> {{ publication.vote_count }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <app-footer></app-footer>
+</footer>

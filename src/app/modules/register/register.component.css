@@ -1,0 +1,114 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.bg-custom {
+  background-color: #2b2b2b;
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  color: #ff9bb5;
+}
+
+.text-continued{
+  color: #ff9bb5;
+  text-align: center;
+  font-weight: bold;
+}
+
+.text-bg-custom {
+  color: #ffffff !important;
+}
+
+.border-custom-subtle {
+  border-color: #dee2e6 !important;
+}
+
+.text-custom {
+  color: #ffffff !important;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #333;
+}
+
+.card-body {
+  background-color: #333;
+  border-radius: 20%;
+}
+
+h3 {
+  color: #333333;
+}
+
+p {
+  color: #666666;
+}
+
+.link-custom {
+  color: rgb(54, 145, 219);
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #dddddd;
+}
+
+.form-check-input:checked {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-custom {
+  background-color: #79e6ff;
+  border: 3px solid #E4E2DD;
+  color: #2b2b2b;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-custom:hover {
+  background-color: #84e7fd;
+  border: 3px solid #E4E2DD;
+  cursor: pointer;
+}
+
+.text-center{
+  color: #A3B1BF;
+}
+
+a {
+  color: #ff9bb5;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ff9bb5;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-custom {
+  color: #ff9bb5;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link-custom:hover {
+  color: #ff9bb5;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+
