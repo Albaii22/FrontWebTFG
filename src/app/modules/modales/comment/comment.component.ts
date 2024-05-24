@@ -11,29 +11,31 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./comment.component.css']
 })
 export class CommentComponent {
-  commentContent: string = '';
-  currentPublication: PublicationI;
-  publicationUsername: string;
-  publicationProfileImage: string;
+  commentContent: string = ''; // Initializing commentContent to store the comment text
+  currentPublication: PublicationI; // Variable to store the current publication
+  publicationUsername: string; // Variable to store the username of the publication owner
+  publicationProfileImage: string; // Variable to store the profile image URL of the publication owner
 
   constructor(
-    public dialogRef: MatDialogRef<CommentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    public dialogRef: MatDialogRef<CommentComponent>, // Injecting MatDialogRef for dialog reference
+    @Inject(MAT_DIALOG_DATA) public data: any // Injecting MAT_DIALOG_DATA for passing data to the dialog
   ) {
+    // Initializing component properties with data passed to the dialog
     this.currentPublication = data.currentPublication;
     this.publicationUsername = data.publicationUsername;
     this.publicationProfileImage = data.publicationProfileImage;
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(); // Closing the dialog without any action
   }
 
   createComment(): void {
-    this.dialogRef.close(this.commentContent);
+    this.dialogRef.close(this.commentContent); // Closing the dialog and passing the comment content
   }
 
   getTimeSince(timestamp: string): string {
+    // Function to calculate and return the time since a given timestamp
     const now = new Date();
     const publicationDate = new Date(timestamp);
     const seconds = Math.floor((now.getTime() - publicationDate.getTime()) / 1000);

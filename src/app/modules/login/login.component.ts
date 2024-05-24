@@ -17,7 +17,7 @@ import { TokenService } from '../../services/token/token.service';
 })
 export class LoginComponent {
 
-  LoginForm = {
+  LoginForm = { // Initializing LoginForm object for storing username and password
     username: '',
     password: ''
   }
@@ -25,19 +25,25 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router , private tokenService: TokenService) {}
 
   Login(form: LoginI): void {
+    // Checking if username and password are not empty
     if (this.LoginForm.username !== '' || this.LoginForm.password !== '') {
+      // Calling AuthService Login method to authenticate user
       this.authService.Login(form).subscribe({
         next: (data) => {
+          // Setting token after successful login
           this.tokenService.setToken(data.token);
           console.log(data);
+          // Showing success message
           Swal.fire({
             icon: 'success',
             title: 'Successful Login!',
             text: 'You have logged in successfully.',
           });
+          // Navigating to home page after successful login
           this.router.navigate(['/home']);
         },
         error: (err) => {
+          // Showing error message if login fails
           Swal.fire({
             icon: 'error',
             title: 'Invalid data',
@@ -46,6 +52,7 @@ export class LoginComponent {
         }
       });
     } else {
+      // Showing warning message if username or password is empty
       Swal.fire({
         icon: 'warning',
         title: 'Incomplete data',
@@ -55,6 +62,7 @@ export class LoginComponent {
   }
 
   goToRegister() {
+    // Navigating to the registration page
     this.router.navigate(['/register']);
   }
 

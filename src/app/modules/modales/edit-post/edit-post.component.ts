@@ -12,22 +12,23 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./edit-post.component.css']
 })
 export class EditPostComponent {
-  publication: PublicationI;
-  updatedContent: string;
+  publication: PublicationI; // Variable to store the publication data
+  updatedContent: string; // Variable to store the updated content of the publication
 
   constructor(
-    public dialogRef: MatDialogRef<EditPostComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    public dialogRef: MatDialogRef<EditPostComponent>, // Injecting MatDialogRef for dialog reference
+    @Inject(MAT_DIALOG_DATA) public data: any // Injecting MAT_DIALOG_DATA for passing data to the dialog
   ) {
+    // Initializing component properties with data passed to the dialog
     this.publication = data.publication;
     this.updatedContent = this.publication.content;
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(); // Closing the dialog without any action
   }
 
   saveChanges(): void {
-    this.dialogRef.close(this.updatedContent);
+    this.dialogRef.close(this.updatedContent); // Closing the dialog and passing the updated content
   }
 }

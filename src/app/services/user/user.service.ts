@@ -15,16 +15,19 @@ export class UserService {
 
   constructor(private http: HttpClient, private tokenService: TokenService) { }
 
+  // Get user ID by username
   getUsuarioIdByUsername(username: string | null): Observable<any> {
     const url = `${this.apiUrl}/username/${username}/id`;
     return this.http.get<any>(url);
   }
 
+  // Get user by ID
   getUserById(id: number): Observable<userI> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<userI>(url);
   }
 
+  // Upload profile image for a user
   uploadProfileImage(id: number, file: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
@@ -32,6 +35,7 @@ export class UserService {
     return this.http.post<any>(url, formData);
   }
 
+  // Get user data from token
   getDataFromToken(): userI | null {
     const tokenString = this.tokenService.getToken();
     if (tokenString) {
@@ -42,6 +46,7 @@ export class UserService {
     return null;
   }
 
+  // Get username from token
   getUsernameFromToken(): string | null {
     const tokenString = this.tokenService.getToken();
     if (tokenString) {
@@ -51,16 +56,19 @@ export class UserService {
     return null;
   }
 
+  // Update about me section for a user
   updateAboutMe(userId: number, aboutMe: string): Observable<userI> {
     const url = `${this.apiUrl}/${userId}/aboutMe`;
     return this.http.put<userI>(url, { aboutMe });
   }
 
+  // Update user information
   updateUsuario(id: number, user: userUpdateI): Observable<userI> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.put<userI>(url, user);
   }
 
+  // Get all users
   getAllUsers(): Observable<userI[]> {
     const url = `${this.apiUrl}`;
     return this.http.get<userI[]>(url);

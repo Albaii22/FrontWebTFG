@@ -9,6 +9,7 @@ export class TokenService {
 
   constructor() { }
 
+  // Retrieve the token from sessionStorage
   getToken(): string | null {
     if (typeof sessionStorage !== 'undefined') {
       return sessionStorage.getItem(this.tokenKey);
@@ -18,6 +19,7 @@ export class TokenService {
     }
   }
 
+  // Set the token in sessionStorage
   setToken(token: string): void {
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.setItem(this.tokenKey, token);
@@ -26,6 +28,7 @@ export class TokenService {
     }
   }
 
+  // Remove the token from sessionStorage
   removeToken(): void {
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem(this.tokenKey);

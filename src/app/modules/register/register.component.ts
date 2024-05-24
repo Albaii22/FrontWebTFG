@@ -19,75 +19,90 @@ import { FormsModule } from '@angular/forms';
 })
 export class RegisterComponent {
 
-  RegisterForm = {
-    username: '',
-    email: '',
-    password: ''
-  }
+  // Object to store the data from the registration form
+RegisterForm = {
+  username: '', // Field for the username
+  email: '',    // Field for the email
+  password: ''  // Field for the password
+}
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private tokenService: TokenService,
-    private userService: UserService,
-    private dialog: MatDialog // Inyecta MatDialog para abrir el modal
-  ) {}
+constructor(
+  private authService: AuthService,    // Authentication service
+  private router: Router,              // Routing service
+  private tokenService: TokenService,  // Service to manage authentication token
+  private userService: UserService,    // User service
+  private dialog: MatDialog             // Service to open the registration modal
+) {}
 
-  Register(form: RegisterI): void {
-    if (this.RegisterForm.username !== '' && this.RegisterForm.password !== '') {
-      this.authService.Register(form).subscribe({
-        next: (data) => {
-          this.tokenService.setToken(data.token);
-          const loginForm: LoginI = {
-            username: form.username,
-            password: form.password
-          };
-          this.authService.Login(loginForm).subscribe({
-            next: (loginData) => {
-              this.tokenService.setToken(loginData.token);
-              this.openRegisterModal(); 
-            },
-            error: (loginErr) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Auto Login Failed',
-                text: 'There was an error during the auto login process.',
-              });
-            }
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid data',
-            text: 'There was an error during the registration process.',
-          });
-        }
-      });
-    } else {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Incomplete data',
-        text: 'Please fill out all required fields.',
-      });
-    }
-  }
-
-  openRegisterModal(): void {
-    const dialogRef = this.dialog.open(AboutmeComponent, {
-      width: '400px',
-      data: { username: this.RegisterForm.username }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.router.navigate(['/home']);
+// Method to register a new user
+Register(form: RegisterI): void {
+  // Check if the username and password are not empty
+  if (this.RegisterForm.username !== '' && this.RegisterForm.password !== '') {
+    // Make a registration request to the server
+    this.authService.Register(form).subscribe({
+      next: (data) => { // Handle successful server response
+        // Set the token received from the server
+        this.tokenService.setToken(data.token);
+        // Build a login form object with the provided username and password
+        const loginForm: LoginI = {
+          username: form.username,
+          password: form.password
+        };
+        // Attempt auto-login with the login form
+        this.authService.Login(loginForm).subscribe({
+          next: (loginData) => { // Handle successful auto-login response
+            // Set the token received from the auto-login
+            this.tokenService.setToken(loginData.token);
+            // Open additional registration modal
+            this.openRegisterModal(); 
+          },
+          error: (loginErr) => { // Handle errors during auto-login
+            // Show an error message indicating auto-login has failed
+            Swal.fire({
+              icon: 'error',
+              title: 'Auto Login Failed',
+              text: 'There was an error during the auto login process.',
+            });
+          }
+        });
+      },
+      error: (err) => { // Handle errors during registration
+        // Show an error message indicating an error occurred during the registration process
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid data',
+          text: 'There was an error during the registration process.',
+        });
       }
     });
+  } else {
+    // Show a warning indicating some fields in the registration form are incomplete
+    Swal.fire({
+      icon: 'warning',
+      title: 'Incomplete data',
+      text: 'Please fill out all required fields.',
+    });
   }
+}
 
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
+// Method to open the additional registration modal
+openRegisterModal(): void {
+  const dialogRef = this.dialog.open(AboutmeComponent, {
+    width: '400px',
+    data: { username: this.RegisterForm.username } // Pass the username to the modal
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    // Navigate to the home page if the user completed the additional registration modal
+    if (result) {
+      this.router.navigate(['/home']);
+    }
+  });
+}
+
+// Method to navigate to the login page
+goToLogin() {
+  this.router.navigate(['/login']);
+}
 
 }
