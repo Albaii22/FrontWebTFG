@@ -51,11 +51,6 @@ export class UserService {
     return null;
   }
 
-  getUserByUsername(username: string): Observable<userI> {
-    const url = `${this.apiUrl}/username/${username}`;
-    return this.http.get<userI>(url);
-  }
-
   updateAboutMe(userId: number, aboutMe: string): Observable<userI> {
     const url = `${this.apiUrl}/${userId}/aboutMe`;
     return this.http.put<userI>(url, { aboutMe });

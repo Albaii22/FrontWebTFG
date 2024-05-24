@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 export class HelpersService {
   private userId: number =0;
   private username: string = '';
+  private profileImage: string = '';
 
   constructor(private router: Router) { }
 
@@ -23,6 +24,14 @@ export class HelpersService {
 
   getUsername(){
     return this.username;
+  }
+
+  getProfileImage(): string {
+    return this.profileImage;
+  }
+
+  setProfileImage(image: string): void {
+    this.profileImage = image;
   }
 }
 

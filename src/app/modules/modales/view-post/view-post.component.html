@@ -1,22 +1,20 @@
 <div class="modal-container">
-    <div class="modal-content">
-      <div class="modal-header">
-        <img src="../../assets/img/profile.png" alt="Perfil" />
-        <div class="tweet-user-info">
-          <h3>{{ publicationUsernames[publication.id] }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
-          <p>{{ publication.content }}</p>
-          
-        </div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <img [src]="publicationProfileImage" alt="Perfil" />
+      <div class="tweet-user-info">
+        <h3>{{ publicationUsernames[publication.id] }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
+        <p>{{ publication.content }}</p>
       </div>
-      <div *ngFor="let comment of publication.comments" class="comment">
-        <img src="../../assets/img/profile.png" alt="Perfil" class="comment-profile-pic" />
-        <div class="comment-user-info">
-          <h4>{{ publicationUsernames[comment.userId] }}</h4>
-          <span class="time">{{ getTimeSince(comment.timestamp) }}</span>
-          <p>{{ comment.content }}</p>
-        </div>
-      </div>
-      <button (click)="onNoClick()">Close</button>
     </div>
+    <div *ngFor="let comment of publication.comments" class="comment">
+      <img [src]="commentProfileImages[comment.userId] || '../../assets/img/profile.png'" alt="Perfil" class="comment-profile-pic" />
+      <div class="comment-user-info">
+        <h4>{{ publicationUsernames[comment.userId] }} -<span class="time">{{ getTimeSince(comment.timestamp) }}</span></h4>
+        
+        <p>{{ comment.content }}</p>
+      </div>
+    </div>
+    <button (click)="onNoClick()">Close</button>
   </div>
-  
+</div>

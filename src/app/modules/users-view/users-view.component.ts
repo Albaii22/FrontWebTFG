@@ -17,6 +17,7 @@ import { ViewPostComponent } from '../modales/view-post/view-post.component';
 import Swal from 'sweetalert2';
 import { CommentsService } from '../../services/comments/comments.service';
 import { CommentsI } from '../../interfaces/comments.interface';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-users-view',
@@ -52,7 +53,8 @@ export class UsersViewComponent implements OnInit {
     private publicationsService: PublicationsService,
     private userService: UserService,
     private commentsService: CommentsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -71,12 +73,19 @@ export class UsersViewComponent implements OnInit {
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
       users => {
-        this.users = users;
+        this.users = users.map(user => ({
+          ...user,
+          profileImageUrl: user.profileImageUrl ? `http://localhost:8082/${decodeURIComponent(user.profileImageUrl)}` : '../../assets/img/profile.png'
+        }));
       },
       error => {
         console.error('Error fetching users:', error);
       }
     );
+  }
+
+  sanitizeImageUrl(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
   navigateToFollowing() {
@@ -276,7 +285,7 @@ export class UsersViewComponent implements OnInit {
         content: this.commentContent,
         timestamp: new Date().toISOString(),
         publicationId: this.currentPublication.id,
-        userId: this.helperService.getUserId()
+        userId: this.helperService.getUserId(),
       };
 
       this.commentsService.createComment(newComment, this.helperService.getUserId()).subscribe(
@@ -302,16 +311,5 @@ export class UsersViewComponent implements OnInit {
         console.error('Error toggling like:', error);
       }
     );
-  }
-
-  viewPublication(publication: PublicationI, event: MouseEvent): void {
-    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
-      return;
-    }
-    
-    this.dialog.open(ViewPostComponent, {
-      width: '500px',
-      data: { publication: publication, publicationUsernames: { [publication.id]: this.selectedUser?.username } }
-    });
   }
 }

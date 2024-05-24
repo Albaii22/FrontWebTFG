@@ -22,7 +22,7 @@
       <div *ngFor="let publication of publications" class="tweet">
         <div class="tweet-header">
           <div class="left-section">
-            <img src="../../assets/img/profile.png" alt="Perfil">
+            <img [src]="publicationProfileImages[publication.id]" alt="Perfil" class="profile-image">
             <div class="tweet-user-info">
               <h3>{{ publicationUsernames[publication.id] }}  
                 <span class="time">- {{ getTimeSince(publication.timestamp) }}</span>

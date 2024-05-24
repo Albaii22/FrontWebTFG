@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { HelpersService } from '../../services/helpers/helpers.service';
 import { UserService } from '../../services/user/user.service';
 import Swal from 'sweetalert2';
@@ -35,6 +35,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+
   username = this.userService.getUsernameFromToken();
   tweetContent = '';
   userPublications: PublicationI[] = [];
@@ -45,6 +47,7 @@ export class ProfileComponent implements OnInit {
   currentPublication: PublicationI | null = null;
   currentUserId: number = 0;
   userId = this.helperService.getUserId();
+  selectedFile: File | null = null;
 
   constructor(
     private userService: UserService,
@@ -53,7 +56,8 @@ export class ProfileComponent implements OnInit {
     private dialog: MatDialog,
     private commentsService: CommentsService,
     private tokenService: TokenService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -61,7 +65,7 @@ export class ProfileComponent implements OnInit {
       user => {
         this.helperService.setUserId(user);
         if (user.profileImageUrl) {
-          this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
+          this.profileImageUrl = this.sanitizeImageName(user.profileImageUrl);
         }
         this.currentUserId = user;
         this.loadUserPublications();
@@ -76,7 +80,7 @@ export class ProfileComponent implements OnInit {
         this.registrationDate = new Date(user.registration_date);
         this.aboutMe = user.aboutMe;
         if (user.profileImageUrl) {
-          this.profileImageUrl = this.sanitizeImageUrl(user.profileImageUrl);
+          this.profileImageUrl = this.sanitizeImageName(user.profileImageUrl);
         }
       },
       error => {
@@ -87,9 +91,37 @@ export class ProfileComponent implements OnInit {
     console.log(this.helperService.getUserId());
   }
 
-  sanitizeImageUrl(url: string): SafeUrl {
-    const fullUrl = `http://localhost:8082/${decodeURIComponent(url)}`;
+  sanitizeImageName(name: string): SafeUrl {
+    const fullUrl = `http://localhost:8082/${decodeURIComponent(name)}`;
     return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.profileImageUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+      this.onUpload();
+    }
+  }
+
+  onUpload(): void {
+    if (this.selectedFile && this.userId !== null) {
+      this.userService.uploadProfileImage(this.userId, this.selectedFile).subscribe(
+        (response: { profileImageUrl: string }) => {
+          this.profileImageUrl = this.sanitizeImageName(response.profileImageUrl);
+          console.log('Image uploaded successfully', response);
+          console.log('Profile Image URL:', response.profileImageUrl);
+        },
+        error => {
+          console.error('Error uploading image', error);
+        }
+      );
+    }
+  }
+
+  selectFileInput(): void {
+    this.renderer.selectRootElement(this.fileInput.nativeElement).click();
   }
 
   showNewPostModal(): void {
@@ -102,6 +134,7 @@ export class ProfileComponent implements OnInit {
       if (result) {
         this.tweetContent = result;
         this.createPublication();
+        window.location.reload();
       }
     });
   }
@@ -122,7 +155,6 @@ export class ProfileComponent implements OnInit {
       response => {
         console.log('Publication created:', response);
         this.tweetContent = '';
-        this.loadUserPublications();
       },
       error => {
         console.error('Error creating publication:', error);
@@ -135,10 +167,13 @@ export class ProfileComponent implements OnInit {
     if (userId) {
       this.publicationsService.getPublicationsByUserId(userId).subscribe(
         publications => {
-          this.userPublications = publications.map(publication => ({
-            ...publication,
-            liked_by_user: publication.likedBy.includes(this.currentUserId)
-          })).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          console.log('Publications:', publications);
+          this.userPublications = publications
+            .map(publication => ({
+              ...publication,
+              liked_by_user: publication.likedBy.includes(this.currentUserId)
+            }))
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         },
         error => {
           console.error('Error fetching user publications:', error);
@@ -236,7 +271,10 @@ export class ProfileComponent implements OnInit {
   }
 
   updatePublication(publicationId: number, newContent: string): void {
-    const updatedPublication: PublicationI = { ...this.userPublications.find(pub => pub.id === publicationId), content: newContent } as PublicationI;
+    const updatedPublication: PublicationI = {
+      ...this.userPublications.find(pub => pub.id === publicationId),
+      content: newContent
+    } as PublicationI;
 
     this.publicationsService.updatePublication(publicationId, updatedPublication).subscribe(
       () => {
@@ -261,14 +299,12 @@ export class ProfileComponent implements OnInit {
   editProfile(): void {
     const dialogRef = this.dialog.open(EditProfileComponent, {
       width: '500px',
-      data: { 
-        username: this.username, 
-        aboutMe: this.aboutMe, 
-        profileImageUrl: this.profileImageUrl 
+      data: {
+        username: this.username,
+        aboutMe: this.aboutMe,
+        profileImageUrl: this.profileImageUrl
       }
     });
-     
-    
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -279,7 +315,7 @@ export class ProfileComponent implements OnInit {
           profileImageUrl: profileImageUrl
         };
 
-        console.log(updatedUser)
+        console.log(updatedUser);
 
         this.userService.updateUsuario(this.helperService.getUserId(), updatedUser).subscribe(
           () => {
@@ -290,7 +326,7 @@ export class ProfileComponent implements OnInit {
             );
             this.username = username;
             this.aboutMe = aboutMe;
-            this.profileImageUrl = this.sanitizeImageUrl(profileImageUrl); // update local profileImageUrl
+            this.profileImageUrl = this.sanitizeImageName(profileImageUrl); // update local profileImageUrl
             this.helperService.navigateTo('/login');
             this.tokenService.removeToken();
           },
@@ -310,8 +346,8 @@ export class ProfileComponent implements OnInit {
   showCommentModal(publication: PublicationI): void {
     const dialogRef = this.dialog.open(CommentComponent, {
       width: '500px',
-      data: { 
-        currentPublication: publication, 
+      data: {
+        currentPublication: publication,
         publicationUsername: this.username
       }
     });
@@ -360,7 +396,10 @@ export class ProfileComponent implements OnInit {
   }
 
   viewPublication(publication: PublicationI, event: MouseEvent): void {
-    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
+    if (
+      (event.target as HTMLElement).tagName === 'BUTTON' ||
+      (event.target as HTMLElement).tagName === 'I'
+    ) {
       return;
     }
 

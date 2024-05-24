@@ -1,4 +1,3 @@
-// comment.component.ts
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PublicationI } from '../../../interfaces/publications.interface';
@@ -15,6 +14,7 @@ export class CommentComponent {
   commentContent: string = '';
   currentPublication: PublicationI;
   publicationUsername: string;
+  publicationProfileImage: string;
 
   constructor(
     public dialogRef: MatDialogRef<CommentComponent>,
@@ -22,6 +22,7 @@ export class CommentComponent {
   ) {
     this.currentPublication = data.currentPublication;
     this.publicationUsername = data.publicationUsername;
+    this.publicationProfileImage = data.publicationProfileImage;
   }
 
   onNoClick(): void {

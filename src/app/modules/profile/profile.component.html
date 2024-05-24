@@ -17,7 +17,13 @@
 
   <main>
     <div class="profile-header">
-      <img [src]="profileImageUrl" alt="Profile Image" class="profile-image">
+      <div class="profile-image-container">
+        <img [src]="profileImageUrl" alt="Profile Image" class="profile-image">
+        <div class="profile-image-hover" (click)="selectFileInput()">
+          Update Image
+        </div>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+      </div>
       <div class="profile-info">
         <h2>{{ username }}</h2>
         <p class="about-me">{{ aboutMe }}</p>
@@ -45,9 +51,9 @@
         </div>
         <p class="tweet-content">{{ publication.content }}</p>
         <div class="tweet-actions">
-          <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"></i> <span *ngIf="publication.comments.length > 0">{{ publication.comments.length }}</span></button>
+          <button class="comment-btn" (click)="showCommentModal(publication)"><i class="fas fa-comment"></i> <span *ngIf="publication.comments.length > 0"> {{ publication.comments.length }}</span></button>
           <button class="like-btn" [ngClass]="{'liked': publication.liked_by_user}" (click)="toggleLike(publication)">
-            <i class="fas fa-heart"></i>{{ publication.vote_count }}
+            <i class="fas fa-heart"></i> {{ publication.vote_count }}
           </button>
         </div>
       </div>

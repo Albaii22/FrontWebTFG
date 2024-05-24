@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PublicationI } from '../../../interfaces/publications.interface';
 import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-view-post',
@@ -14,13 +15,18 @@ import { NgFor } from '@angular/common';
 export class ViewPostComponent {
   publication: PublicationI;
   publicationUsernames: { [key: number]: string };
+  publicationProfileImage: SafeUrl;
+  commentProfileImages: { [key: number]: SafeUrl };
 
   constructor(
     public dialogRef: MatDialogRef<ViewPostComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private sanitizer: DomSanitizer
   ) {
     this.publication = data.publication;
     this.publicationUsernames = data.publicationUsernames;
+    this.publicationProfileImage = this.sanitizeImageName(data.publicationProfileImage);
+    this.commentProfileImages = data.commentProfileImages || {};
   }
 
   onNoClick(): void {
@@ -50,4 +56,11 @@ export class ViewPostComponent {
     return Math.floor(seconds) + ' segundos';
   }
 
+  sanitizeImageName(name: string | SafeUrl): SafeUrl {
+    if (typeof name !== 'string') {
+      return name; // Si ya es un SafeUrl, devuélvelo directamente
+    }
+    const fullUrl = name.startsWith('http') ? name : `http://localhost:8082/${decodeURIComponent(name)}`;
+    return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
+  }
 }

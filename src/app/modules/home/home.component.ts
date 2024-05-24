@@ -5,7 +5,6 @@ import { PublicationsService } from '../../services/publications/publications.se
 import { HelpersService } from '../../services/helpers/helpers.service';
 import { CommentsService } from '../../services/comments/comments.service';
 import { Router } from '@angular/router';
-import { CommentsI } from '../../interfaces/comments.interface';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewPostComponent } from '../modales/new-post/new-post.component';
 import { CommentComponent } from '../modales/comment/comment.component';
@@ -18,6 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CommentsI } from '../../interfaces/comments.interface';
 
 @Component({
   selector: 'app-home',
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit {
   tweetContent: string = '';
   publications: PublicationI[] = [];
   publicationUsernames: { [key: number]: string } = {};
+  publicationProfileImages: { [key: number]: SafeUrl } = {};
   commentContent: string = '';
   currentPublication: PublicationI | null = null;
   currentUserId: number = 0;
@@ -54,7 +56,8 @@ export class HomeComponent implements OnInit {
     private publicationsService: PublicationsService,
     private helperService: HelpersService,
     private commentsService: CommentsService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -82,17 +85,28 @@ export class HomeComponent implements OnInit {
           liked_by_user: publication.likedBy.includes(this.currentUserId)
         }));
         this.publications = this.publications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        this.loadUsernames();
+        this.loadUsernamesAndImages();
       }
     );
   }
 
-  loadUsernames(): void {
+  loadUsernamesAndImages(): void {
     this.publications.forEach(publication => {
       this.userService.getUserById(publication.user_id).subscribe(user => {
         this.publicationUsernames[publication.id] = user.username;
+        const profileImage = user.profileImageUrl ? this.sanitizeImageName(user.profileImageUrl) : '../../assets/img/profile.png';
+        this.publicationProfileImages[publication.id] = this.sanitizeImageName(profileImage);
       });
     });
+  }
+  
+
+  sanitizeImageName(name: string | SafeUrl): SafeUrl {
+    if (typeof name !== 'string') {
+      return name;
+    }
+    const fullUrl = name.startsWith('http') ? name : `http://localhost:8082/${decodeURIComponent(name)}`;
+    return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
   }
 
   showNewPostModal(): void {
@@ -147,7 +161,8 @@ export class HomeComponent implements OnInit {
       width: '500px',
       data: { 
         currentPublication: publication, 
-        publicationUsername: this.publicationUsernames[publication.id] 
+        publicationUsername: this.publicationUsernames[publication.id],
+        publicationProfileImage: this.publicationProfileImages[publication.id]
       }
     });
 
@@ -166,7 +181,7 @@ export class HomeComponent implements OnInit {
         content: this.commentContent,
         timestamp: new Date().toISOString(),
         publicationId: this.currentPublication.id,
-        userId: this.helperService.getUserId()
+        userId: this.helperService.getUserId(),
       };
 
       this.commentsService.createComment(newComment, this.helperService.getUserId()).subscribe(
@@ -180,6 +195,30 @@ export class HomeComponent implements OnInit {
         }
       );
     }
+  }
+
+  viewPublication(publication: PublicationI, event: MouseEvent): void {
+    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
+      return;
+    }
+
+    const commentProfileImages: { [key: number]: SafeUrl } = {};
+
+    publication.comments.forEach(comment => {
+      this.userService.getUserById(comment.userId).subscribe(user => {
+        commentProfileImages[comment.userId] = this.sanitizeImageName(user.profileImageUrl || '../../assets/img/profile.png');
+      });
+    });
+
+    this.dialog.open(ViewPostComponent, {
+      width: '500px',
+      data: { 
+        publication: publication, 
+        publicationUsernames: this.publicationUsernames,
+        publicationProfileImage: this.publicationProfileImages[publication.id],
+        commentProfileImages: commentProfileImages
+      }
+    });
   }
 
   getTimeSince(timestamp: string): string {
@@ -289,17 +328,6 @@ export class HomeComponent implements OnInit {
         );
       }
     );
-  }
-
-  viewPublication(publication: PublicationI, event: MouseEvent): void {
-    if ((event.target as HTMLElement).tagName === 'BUTTON' || (event.target as HTMLElement).tagName === 'I') {
-      return;
-    }
-    
-    this.dialog.open(ViewPostComponent, {
-      width: '500px',
-      data: { publication: publication, publicationUsernames: this.publicationUsernames }
-    });
   }
 
   toggleLike(publication: PublicationI): void {

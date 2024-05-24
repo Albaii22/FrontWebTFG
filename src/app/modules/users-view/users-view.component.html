@@ -12,7 +12,7 @@
       <li><button (click)="navigateToFollowing()">Verse Users</button></li>
       <li><button (click)="navigateToProfile()">Profile</button></li>
     </ul>
-     <button (click)="showNewPostModal()" class="new-post">New Post</button>
+    <button (click)="showNewPostModal()" class="new-post">New Post</button>
   </aside>
 
   <main>
@@ -22,7 +22,7 @@
         <span>Back to all users</span>
       </div>
       <div class="profile-header">
-        <img [src]="selectedUser.profileImageUrl" alt="Profile Image">
+        <img [src]="sanitizeImageUrl(selectedUser.profileImageUrl || '../../assets/img/profile.png')" alt="Profile Image">
         <div class="profile-info">
           <h2>{{ selectedUser.username }}</h2>
           <p class="about-me">{{ selectedUser.aboutMe }}</p>
@@ -31,10 +31,10 @@
       </div>
 
       <div class="scrollable-content publications-container">
-        <div *ngFor="let publication of selectedUserPublications" class="tweet" (click)="viewPublication(publication, $event)">
+        <div *ngFor="let publication of selectedUserPublications" class="tweet">
           <div class="tweet-header">
             <div class="left-section">
-              <img [src]="selectedUser.profileImageUrl" alt="Perfil">
+              <img [src]="sanitizeImageUrl(selectedUser.profileImageUrl || '../../assets/img/profile.png')" alt="Perfil">
               <div class="tweet-user-info">
                 <h3>{{ selectedUser.username }} - <span class="time">{{ getTimeSince(publication.timestamp) }}</span></h3>
               </div>
@@ -60,7 +60,7 @@
 
     <div *ngIf="!selectedUser" class="scrollable-content user-cards">
       <div *ngFor="let user of users" class="user-card" (click)="viewUserProfile(user)">
-        <img [src]="user.profileImageUrl" alt="User Image">
+        <img [src]="sanitizeImageUrl(user.profileImageUrl || '../../assets/img/profile.png')" alt="User Image">
         <h3>{{ user.username }}</h3>
         <p>{{ user.aboutMe | slice:0:50 }}...</p>
       </div>

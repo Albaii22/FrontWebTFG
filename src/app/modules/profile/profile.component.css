@@ -14,11 +14,11 @@ body {
   min-height: 100vh;
 }
 
-.registration-date{
+.registration-date {
   color: #4b4b4b;
 }
 
-h3{
+h3 {
   color: #A3B1BF;
 }
 
@@ -150,28 +150,52 @@ main {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.profile-header img {
+.profile-image-container {
+  position: relative;
+}
+
+.profile-image {
   width: 100px;
   height: 100px;
   border-radius: 50%;
 }
 
-.profile-header .profile-info {
+.profile-image-hover {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.profile-image-container:hover .profile-image-hover {
+  display: flex;
+}
+
+.profile-info {
   display: flex;
   flex-direction: column;
 }
 
-.profile-header .profile-info h2 {
+.profile-info h2 {
   margin: 0;
 }
 
-.profile-header .profile-info .registration-date {
+.profile-info .registration-date {
   margin: 5px 0;
   color: gray;
   font-size: 0.9em;
 }
 
-.profile-header .profile-info button {
+.profile-info button {
   background-color: #3cd9fc;
   color: black;
   border: 2px solid white;
@@ -182,7 +206,7 @@ main {
   font-weight: 500;
 }
 
-.profile-header .profile-info button:hover {
+.profile-info button:hover {
   background-color: #0d95e8;
 }
 
@@ -345,7 +369,7 @@ footer {
   background-color: #ff9bb5;
 }
 
-.comment-btn{
+.comment-btn {
   background-color: #79e6ff;
   color: #fff;
   border: none;
@@ -362,7 +386,7 @@ footer {
   background-color: #5bd7f3;
 }
 
-.like-btn{
+.like-btn {
   background-color: #79e6ff;
   color: #fff;
   border: none;
